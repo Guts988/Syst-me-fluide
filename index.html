@@ -176,9 +176,10 @@
 
   .entry-row {
     display: flex;
-    gap: 10px;
-    align-items: flex-end;
+    gap: 12px;
+    align-items: center;
     flex-wrap: wrap;
+    flex-direction: column;
   }
 
   .field { display: flex; flex-direction: column; gap: 5px; }
@@ -200,8 +201,8 @@
   .input:focus { border-color: var(--accent-dim); }
   .input::placeholder { color: var(--dim); }
 
-  .field-weight { flex: 1; min-width: 100px; }
-  .field-date { flex: 1; min-width: 130px; }
+  .field-weight { width: 80%; }
+  .field-date { width: 80%; }
 
   .btn {
     background: var(--accent-dim);
