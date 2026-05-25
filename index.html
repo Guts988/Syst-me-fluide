@@ -456,7 +456,68 @@
     .tab { padding: 10px 12px; font-size: 11px; }
   }
 
-  /* scrollbar */
+  /* ── PAS ── */
+.pas-input-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.pas-input-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+  width: 80%;
+  flex-direction: column;
+}
+.pas-banner {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-left: 3px solid var(--gold);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.pas-banner-val {
+  font-family: var(--display);
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--gold);
+  line-height: 1;
+}
+.pas-banner-label {
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.pas-banner-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
+.pas-chart-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+  margin-bottom: 20px;
+}
+.pas-chart-title {
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+/* scrollbar */
   ::-webkit-scrollbar { width: 4px; height: 4px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
   ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
@@ -469,7 +530,7 @@
   <div class="header">
     <div class="header-top">
       <div class="logo-area">
-        <div class="eyebrow">Système fluide</div>
+        <div class="eyebrow">Protocole Calorique</div>
         <h1>Calorie Tracker</h1>
       </div>
     </div>
@@ -478,6 +539,7 @@
 
   <div class="nav">
     <button class="tab active" data-tab="journal">📅 Journal</button>
+    <button class="tab" data-tab="pas">👣 Pas</button>
     <button class="tab" data-tab="graphe">📈 Graphe</button>
     <button class="tab" data-tab="regles">📖 Règles</button>
     <button class="tab" data-tab="reglages">⚙️ Réglages</button>
@@ -998,6 +1060,212 @@ document.querySelectorAll(".tab").forEach(btn => {
     render();
   });
 });
+
+// ══════════════════════════════════════════════
+// PAS
+// ══════════════════════════════════════════════
+function renderPas(c) {
+  const pas = state.pas || [];
+  const today = new Date().toISOString().slice(0, 10);
+
+  // Calcul objectif demain
+  let objectifDemain = 10000;
+  if (pas.length > 0) {
+    const total = pas.reduce((s, e) => s + e.steps, 0);
+    const jours = pas.length + 1;
+    objectifDemain = Math.max(0, Math.round(10000 * jours - total));
+  }
+
+  const dernierPas = pas.length > 0 ? pas[pas.length - 1] : null;
+  const moyenne = pas.length > 0 ? Math.round(pas.reduce((s, e) => s + e.steps, 0) / pas.length) : 0;
+
+  // Banner
+  if (pas.length > 0) {
+    const moyClass = moyenne >= 10000 ? "mode-r" : "mode-b";
+    c.innerHTML += `
+      <div class="pas-banner">
+        <div>
+          <div class="pas-banner-label">Objectif demain</div>
+          <div class="pas-banner-val">${objectifDemain.toLocaleString('fr-FR')}</div>
+          <div class="pas-banner-sub">pas pour maintenir 10 000/jour</div>
+        </div>
+        <div style="text-align:right">
+          <div class="pas-banner-label">Moyenne</div>
+          <div style="font-size:20px;font-family:var(--display);font-weight:700;color:${moyenne >= 10000 ? 'var(--up)' : 'var(--gold)'}">${moyenne.toLocaleString('fr-FR')}</div>
+          <div class="pas-banner-sub">${pas.length} jour${pas.length > 1 ? 's' : ''} enregistrés</div>
+        </div>
+      </div>`;
+  }
+
+  // Formulaire
+  c.innerHTML += `
+    <div class="pas-input-card">
+      <div class="add-entry-title">+ Ajouter mes pas du jour</div>
+      <div class="pas-input-row">
+        <div class="field" style="width:100%">
+          <label>Date</label>
+          <input class="input" type="date" id="pasDate" value="${today}"/>
+        </div>
+        <div class="field" style="width:100%">
+          <label>Nombre de pas</label>
+          <input class="input" type="number" id="pasSteps" placeholder="8500" min="0" max="99999"/>
+        </div>
+        <button class="btn" style="width:100%;text-align:center" onclick="addPas()">AJOUTER</button>
+      </div>
+    </div>`;
+
+  // Graphique
+  if (pas.length >= 2) {
+    c.innerHTML += `
+      <div class="pas-chart-wrap">
+        <div class="pas-chart-title">Évolution des pas</div>
+        <canvas id="chartPas" height="180"></canvas>
+      </div>`;
+    setTimeout(() => drawPasChart(pas), 50);
+  }
+
+  // Historique
+  if (pas.length > 0) {
+    let html = `<div class="table-wrap"><table>
+      <thead><tr>
+        <th>Date</th><th>Pas</th><th>Statut</th><th></th>
+      </tr></thead><tbody>`;
+    [...pas].reverse().forEach(e => {
+      const ok = e.steps >= 10000;
+      const color = ok ? 'var(--up)' : e.steps >= 7000 ? 'var(--gold)' : 'var(--down)';
+      const icon = ok ? '✅' : e.steps >= 7000 ? '⚡' : '❌';
+      html += `<tr>
+        <td class="td-date">${fmtDate(e.date)}</td>
+        <td style="font-size:15px;font-weight:500;color:${color}">${e.steps.toLocaleString('fr-FR')}</td>
+        <td>${icon}</td>
+        <td class="del-col"><button class="del-btn" onclick="deletePas('${e.date}')">✕</button></td>
+      </tr>`;
+    });
+    html += `</tbody></table></div>`;
+    c.innerHTML += html;
+  } else {
+    c.innerHTML += `<div class="empty"><div class="empty-icon">👣</div><p>Entre tes pas du jour<br>pour commencer le suivi.</p></div>`;
+  }
+}
+
+function drawPasChart(pas) {
+  const canvas = document.getElementById('chartPas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const W = canvas.offsetWidth;
+  const H = 180;
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  ctx.scale(dpr, dpr);
+
+  const data = pas.map(e => e.steps);
+  const labels = pas.map(e => fmtDate(e.date).slice(0,5));
+  const pad = { top: 14, right: 14, bottom: 28, left: 52 };
+  const pw = W - pad.left - pad.right;
+  const ph = H - pad.top - pad.bottom;
+  const minV = 0;
+  const maxV = Math.max(...data, 12000);
+
+  function xOf(i) { return pad.left + (i / (data.length - 1)) * pw; }
+  function yOf(v) { return pad.top + ph - ((v - minV) / (maxV - minV)) * ph; }
+
+  // Ligne objectif 10000
+  ctx.strokeStyle = '#ffd16644';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 4]);
+  const y10k = yOf(10000);
+  ctx.beginPath();
+  ctx.moveTo(pad.left, y10k);
+  ctx.lineTo(pad.left + pw, y10k);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#ffd166';
+  ctx.font = '9px ui-monospace, monospace';
+  ctx.textAlign = 'right';
+  ctx.fillText('10 000', pad.left - 4, y10k + 3);
+
+  // Grid
+  ctx.strokeStyle = '#1e1e3a';
+  ctx.lineWidth = 1;
+  [0, 5000, 10000].forEach(v => {
+    if (v === 10000) return;
+    const y = yOf(v);
+    ctx.beginPath();
+    ctx.moveTo(pad.left, y);
+    ctx.lineTo(pad.left + pw, y);
+    ctx.stroke();
+    ctx.fillStyle = '#3a3a5a';
+    ctx.font = '9px ui-monospace, monospace';
+    ctx.textAlign = 'right';
+    ctx.fillText(v === 0 ? '0' : '5 000', pad.left - 4, y + 3);
+  });
+
+  // Gradient
+  const grad = ctx.createLinearGradient(0, pad.top, 0, pad.top + ph);
+  grad.addColorStop(0, '#ffd16633');
+  grad.addColorStop(1, '#ffd16600');
+  ctx.beginPath();
+  ctx.moveTo(xOf(0), yOf(data[0]));
+  for (let i = 1; i < data.length; i++) ctx.lineTo(xOf(i), yOf(data[i]));
+  ctx.lineTo(xOf(data.length - 1), pad.top + ph);
+  ctx.lineTo(xOf(0), pad.top + ph);
+  ctx.closePath();
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  // Ligne
+  ctx.beginPath();
+  ctx.lineWidth = 2;
+  for (let i = 0; i < data.length; i++) {
+    ctx.strokeStyle = data[i] >= 10000 ? '#4dfa8a' : '#ffd166';
+    if (i === 0) ctx.moveTo(xOf(0), yOf(data[0]));
+    else {
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(xOf(i-1), yOf(data[i-1]));
+      ctx.lineTo(xOf(i), yOf(data[i]));
+    }
+  }
+  ctx.stroke();
+
+  // Points
+  data.forEach((v, i) => {
+    ctx.beginPath();
+    ctx.arc(xOf(i), yOf(v), 3, 0, Math.PI * 2);
+    ctx.fillStyle = v >= 10000 ? '#4dfa8a' : '#ffd166';
+    ctx.fill();
+  });
+
+  // Labels X
+  ctx.fillStyle = '#3a3a5a';
+  ctx.font = '9px ui-monospace, monospace';
+  ctx.textAlign = 'center';
+  const step = Math.max(1, Math.floor(data.length / 7));
+  for (let i = 0; i < labels.length; i += step) {
+    ctx.fillText(labels[i], xOf(i), pad.top + ph + 16);
+  }
+}
+
+function addPas() {
+  const date = document.getElementById('pasDate').value;
+  const steps = parseInt(document.getElementById('pasSteps').value);
+  if (!date || isNaN(steps)) return;
+  if (!state.pas) state.pas = [];
+  const existing = state.pas.findIndex(e => e.date === date);
+  if (existing >= 0) state.pas[existing].steps = steps;
+  else state.pas.push({ date, steps });
+  state.pas.sort((a, b) => a.date.localeCompare(b.date));
+  saveState();
+  render();
+}
+
+function deletePas(date) {
+  if (!confirm("Supprimer cette entrée ?")) return;
+  state.pas = (state.pas || []).filter(e => e.date !== date);
+  saveState();
+  render();
+}
 
 // ══════════════════════════════════════════════
 // INIT
