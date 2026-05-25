@@ -1103,7 +1103,13 @@ function renderPas(c) {
         <div class="today-label">Jours enregistrés</div>
         <div style="font-size:20px;font-family:var(--display);font-weight:700">${pas.length}</div>
       </div>
-    </div>`;
+    </div>
+    ${pas.length >= 2 ? `<div class="chart-wrap">
+      <div class="chart-title">Pas par jour</div>
+      <canvas id="chartPas" height="180"></canvas>
+    </div>` : ''}`;
+
+  if (pas.length >= 2) setTimeout(() => drawPasChart(pas), 50);
 }
 
 function drawPasChart(pas) {
