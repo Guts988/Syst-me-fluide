@@ -530,7 +530,7 @@
   <div class="header">
     <div class="header-top">
       <div class="logo-area">
-        <div class="eyebrow">Protocole Calorique</div>
+        <div class="eyebrow">Système fluide</div>
         <h1>Calorie Tracker</h1>
       </div>
     </div>
@@ -692,6 +692,7 @@ function render() {
   c.innerHTML = "";
 
   if (currentTab === "journal") renderJournal(c);
+  else if (currentTab === "pas") renderPas(c);
   else if (currentTab === "graphe") renderGraphe(c);
   else if (currentTab === "regles") renderRegles(c);
   else if (currentTab === "reglages") renderReglages(c);
@@ -1076,76 +1077,33 @@ function renderPas(c) {
     objectifDemain = Math.max(0, Math.round(10000 * jours - total));
   }
 
-  const dernierPas = pas.length > 0 ? pas[pas.length - 1] : null;
-  const moyenne = pas.length > 0 ? Math.round(pas.reduce((s, e) => s + e.steps, 0) / pas.length) : 0;
-
-  // Banner
-  if (pas.length > 0) {
-    const moyClass = moyenne >= 10000 ? "mode-r" : "mode-b";
-    c.innerHTML += `
-      <div class="pas-banner">
-        <div>
-          <div class="pas-banner-label">Objectif demain</div>
-          <div class="pas-banner-val">${objectifDemain.toLocaleString('fr-FR')}</div>
-          <div class="pas-banner-sub">pas pour maintenir 10 000/jour</div>
-        </div>
-        <div style="text-align:right">
-          <div class="pas-banner-label">Moyenne</div>
-          <div style="font-size:20px;font-family:var(--display);font-weight:700;color:${moyenne >= 10000 ? 'var(--up)' : 'var(--gold)'}">${moyenne.toLocaleString('fr-FR')}</div>
-          <div class="pas-banner-sub">${pas.length} jour${pas.length > 1 ? 's' : ''} enregistrés</div>
-        </div>
-      </div>`;
-  }
-
-  // Formulaire
-  c.innerHTML += `
-    <div class="pas-input-card">
-      <div class="add-entry-title">+ Ajouter mes pas du jour</div>
+  c.innerHTML = `
+    <div class="add-entry">
+      <div class="add-entry-title">👣 Mes pas du jour</div>
       <div class="pas-input-row">
-        <div class="field" style="width:100%">
+        <div class="field" style="width:80%">
           <label>Date</label>
           <input class="input" type="date" id="pasDate" value="${today}"/>
         </div>
-        <div class="field" style="width:100%">
+        <div class="field" style="width:80%">
           <label>Nombre de pas</label>
-          <input class="input" type="number" id="pasSteps" placeholder="8500" min="0" max="99999"/>
+          <input class="input" type="number" id="pasSteps" placeholder="8 500" min="0" max="99999"/>
         </div>
-        <button class="btn" style="width:100%;text-align:center" onclick="addPas()">AJOUTER</button>
+        <button class="btn" style="width:80%;text-align:center" onclick="addPas()">AJOUTER</button>
+      </div>
+    </div>
+
+    <div class="today-banner">
+      <div>
+        <div class="today-label">Objectif demain</div>
+        <div class="today-cal" style="color:var(--gold)">${objectifDemain.toLocaleString('fr-FR')} <span style="font-size:14px;font-weight:400;opacity:.5">pas</span></div>
+        <div class="today-sub">pour maintenir une moyenne de 10 000 pas/jour</div>
+      </div>
+      <div style="text-align:right">
+        <div class="today-label">Jours enregistrés</div>
+        <div style="font-size:20px;font-family:var(--display);font-weight:700">${pas.length}</div>
       </div>
     </div>`;
-
-  // Graphique
-  if (pas.length >= 2) {
-    c.innerHTML += `
-      <div class="pas-chart-wrap">
-        <div class="pas-chart-title">Évolution des pas</div>
-        <canvas id="chartPas" height="180"></canvas>
-      </div>`;
-    setTimeout(() => drawPasChart(pas), 50);
-  }
-
-  // Historique
-  if (pas.length > 0) {
-    let html = `<div class="table-wrap"><table>
-      <thead><tr>
-        <th>Date</th><th>Pas</th><th>Statut</th><th></th>
-      </tr></thead><tbody>`;
-    [...pas].reverse().forEach(e => {
-      const ok = e.steps >= 10000;
-      const color = ok ? 'var(--up)' : e.steps >= 7000 ? 'var(--gold)' : 'var(--down)';
-      const icon = ok ? '✅' : e.steps >= 7000 ? '⚡' : '❌';
-      html += `<tr>
-        <td class="td-date">${fmtDate(e.date)}</td>
-        <td style="font-size:15px;font-weight:500;color:${color}">${e.steps.toLocaleString('fr-FR')}</td>
-        <td>${icon}</td>
-        <td class="del-col"><button class="del-btn" onclick="deletePas('${e.date}')">✕</button></td>
-      </tr>`;
-    });
-    html += `</tbody></table></div>`;
-    c.innerHTML += html;
-  } else {
-    c.innerHTML += `<div class="empty"><div class="empty-icon">👣</div><p>Entre tes pas du jour<br>pour commencer le suivi.</p></div>`;
-  }
 }
 
 function drawPasChart(pas) {
