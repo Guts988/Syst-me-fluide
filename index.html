@@ -540,6 +540,7 @@
   <div class="nav">
     <button class="tab active" data-tab="journal">📅 Journal</button>
     <button class="tab" data-tab="pas">👣 Pas</button>
+    <button class="tab" data-tab="prog">💪 Prog</button>
     <button class="tab" data-tab="graphe">📈 Graphe</button>
     <button class="tab" data-tab="regles">📖 Règles</button>
     <button class="tab" data-tab="reglages">⚙️ Réglages</button>
@@ -693,6 +694,7 @@ function render() {
 
   if (currentTab === "journal") renderJournal(c);
   else if (currentTab === "pas") renderPas(c);
+  else if (currentTab === "prog") renderProg(c);
   else if (currentTab === "graphe") renderGraphe(c);
   else if (currentTab === "regles") renderRegles(c);
   else if (currentTab === "reglages") renderReglages(c);
@@ -1229,6 +1231,56 @@ function deletePas(date) {
   state.pas = (state.pas || []).filter(e => e.date !== date);
   saveState();
   render();
+}
+
+// ══════════════════════════════════════════════
+// PROG
+// ══════════════════════════════════════════════
+function renderProg(c) {
+  const jours = [
+    { j: "J1", nom: "Upper 1" },
+    { j: "J2", nom: "Lower 1" },
+    { j: "J3", nom: "Upper 2" },
+    { j: "J4", nom: "Fractionné" },
+    { j: "J5", nom: "Upper 3" },
+    { j: "J6", nom: "Lower 2" },
+    { j: "J7", nom: "Upper 4" },
+    { j: "J8", nom: "Seuil" },
+  ];
+
+  const colors = ["#7b7bff","#4dfa8a","#7b7bff","#ffd166","#7b7bff","#4dfa8a","#7b7bff","#ff6b6b"];
+
+  let html = '<div style="display:flex;flex-direction:column;gap:10px;">';
+  jours.forEach((j, i) => {
+    html += `
+      <div style="
+        background:var(--surface);
+        border:1px solid var(--border);
+        border-left:3px solid ${colors[i]};
+        border-radius:var(--radius);
+        padding:16px 18px;
+        display:flex;
+        align-items:center;
+        gap:16px;
+      ">
+        <div style="
+          font-family:var(--display);
+          font-size:13px;
+          font-weight:800;
+          color:${colors[i]};
+          min-width:28px;
+          letter-spacing:1px;
+        ">${j.j}</div>
+        <div style="
+          font-family:var(--display);
+          font-size:16px;
+          font-weight:700;
+          color:var(--text);
+        ">${j.nom}</div>
+      </div>`;
+  });
+  html += '</div>';
+  c.innerHTML = html;
 }
 
 // ══════════════════════════════════════════════
