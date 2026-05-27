@@ -530,7 +530,7 @@
   <div class="header">
     <div class="header-top">
       <div class="logo-area">
-        <div class="eyebrow">Système fluide</div>
+        <div class="eyebrow">Système calorique</div>
         <h1>Calorie Tracker</h1>
       </div>
     </div>
@@ -629,7 +629,7 @@ function computeProtocol(entries) {
         }
       }
     } else {
-      if (prev.cal === minCal && atMin >= 5) {
+      if (prev.cal === minCal && (atMin >= 5 || (atMin >= 3 && trend3 >= 0))) {
         nextMode = "REMONTEE";
         nextCal = Math.min(maxCal, minCal + step);
       } else {
@@ -937,7 +937,7 @@ function renderRegles(c) {
       <div class="rules-header">↑ Mode Remontée (après 5 jours à ${minCal} kcal)</div>
       <div class="rules-list">
         ${[
-          `Activation après 5 jours consécutifs à ${minCal} kcal`,
+          `Activation après 5 jours consécutifs à ${minCal} kcal, ou après 3 jours si poids stagne ou ↑`,
           `Passage à ${minCal + step} kcal (+${step})`,
           `Si poids ↓ sur 3 jours → maintien (max 5 jours, puis +${step})`,
           `Si poids stagne ou ↑ sur 3 jours → retour en mode BAISSE`,
