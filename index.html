@@ -615,7 +615,8 @@ function computeProtocol(entries) {
     let nextCal, nextMode;
 
     if (prev.mode === "REMONTEE") {
-      if (i >= 3 && trend3 >= 0) {
+      if (i >= 3 && trend3 > 0) {
+        // Poids en hausse sur 3j → retour en BAISSE
         nextMode = "BAISSE";
         nextCal = Math.max(minCal, Math.min(maxCal, prev.cal - step));
       } else {
@@ -623,8 +624,10 @@ function computeProtocol(entries) {
         if (i < 3) {
           nextCal = prev.cal;
         } else if (trend3 < 0) {
+          // Poids en baisse → maintien (max 5j puis +200)
           nextCal = consec >= 5 ? Math.min(maxCal, prev.cal + step) : prev.cal;
         } else {
+          // Poids stagne → +200 kcal
           nextCal = Math.min(maxCal, prev.cal + step);
         }
       }
@@ -939,8 +942,9 @@ function renderRegles(c) {
         ${[
           `Activation après 5 jours consécutifs à ${minCal} kcal, ou après 3 jours si poids stagne ou ↑`,
           `Passage à ${minCal + step} kcal (+${step})`,
-          `Si poids ↓ sur 3 jours → maintien (max 5 jours, puis +${step})`,
-          `Si poids stagne ou ↑ sur 3 jours → retour en mode BAISSE`,
+          `Si poids ↓ sur 3 jours → maintien (max 5 jours, puis +${step})`
+,          `Si poids stagne sur 3 jours → +${step} kcal`,
+          `Si poids ↑ sur 3 jours → retour en mode BAISSE`,
           `Plafond absolu : ${maxCal} kcal`,
         ].map((r, i) => `<div class="rule-item"><span class="rule-num">${i+1}.</span>${r}</div>`).join("")}
       </div>
