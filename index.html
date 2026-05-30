@@ -599,15 +599,17 @@ function computeProtocol(entries) {
       else break;
     }
 
-    // Poids du 1er jour au total calorique actuel
-    // consec = nb de jours AVANT aujourd'hui au même total
-    // donc le 1er jour à ce total est à l'index (i - consec)
-    const firstDayIdx = i - consec;
-    const weightAtFirstDay = sorted[firstDayIdx].weight;
+    // Comparaison J4 vs J2 (et J5 vs J2, J6 vs J2...)
+    // J1 = premier jour au nouveau total (son poids reflète l'ancien total)
+    // J2 = premier poids "vrai" au nouveau total (reflète J1 de ce total)
+    // On compare toujours le poids actuel à J2 (index = firstDayIdx + 1)
+    const firstDayIdx = i - consec;       // index de J1
+    const refDayIdx = firstDayIdx + 1;    // index de J2 = référence
+    const weightRef = sorted[refDayIdx] ? sorted[refDayIdx].weight : sorted[firstDayIdx].weight;
 
-    // Tendance : comparaison poids actuel vs poids du 1er jour à ce total
+    // Tendance : comparaison poids actuel (J4+) vs poids J2 (référence)
     // < 0 → baisse, = 0 → stagne, > 0 → hausse
-    const trendFromStart = w - weightAtFirstDay;
+    const trendFromStart = w - weightRef;
 
     // On a assez de données pour décider quand on est au 3ème jour ou plus
     // (consec >= 2 signifie : j1, j2 déjà passés, aujourd'hui = j3)
