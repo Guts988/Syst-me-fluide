@@ -611,7 +611,9 @@ function computeProtocol(entries) {
 
     // On a assez de données pour décider quand on est au 3ème jour ou plus
     // (consec >= 2 signifie : j1, j2 déjà passés, aujourd'hui = j3)
-    const hasData = consec >= 2;
+    // hasData = consec >= 3 garantit 3 jours minimum au meme total
+    // (decision prise a partir du J4, J1/J2/J3 gardent toujours le meme total)
+    const hasData = consec >= 3;
 
     let nextCal, nextMode;
 
