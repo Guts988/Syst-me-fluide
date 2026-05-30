@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="fr">
 <head>
 <meta charset="UTF-8"/>
@@ -522,7 +521,6 @@
   ::-webkit-scrollbar-track { background: var(--bg); }
   ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
 </style>
-
 </head>
 <body>
 <div class="app">
@@ -530,7 +528,7 @@
   <div class="header">
     <div class="header-top">
       <div class="logo-area">
-        <div class="eyebrow">Système fluide</div>
+        <div class="eyebrow">Protocole Calorique</div>
         <h1>Calorie Tracker</h1>
       </div>
     </div>
@@ -594,56 +592,71 @@ function computeProtocol(entries) {
     const prev = result[i - 1];
     if (!prev) continue;
 
-    // Trend over last 3 days
-    const w3entry = i >= 3 ? sorted[i - 3] : null;
-    const trend3 = w3entry ? w - w3entry.weight : 0;
-
-    // Consecutive days at same calorie level (looking back)
+    // Consecutive days at same calorie level (looking back from yesterday)
     let consec = 0;
     for (let k = i - 1; k >= 0; k--) {
       if (result[k].cal === prev.cal) consec++;
       else break;
     }
 
-    // Consecutive days at minCal
-    let atMin = 0;
-    for (let k = i - 1; k >= 0 && k >= i - 5; k--) {
-      if (result[k].cal === minCal) atMin++;
-      else break;
-    }
+    // Poids du 1er jour au total calorique actuel
+    // consec = nb de jours AVANT aujourd'hui au même total
+    // donc le 1er jour à ce total est à l'index (i - consec)
+    const firstDayIdx = i - consec;
+    const weightAtFirstDay = sorted[firstDayIdx].weight;
+
+    // Tendance : comparaison poids actuel vs poids du 1er jour à ce total
+    // < 0 → baisse, = 0 → stagne, > 0 → hausse
+    const trendFromStart = w - weightAtFirstDay;
+
+    // On a assez de données pour décider quand on est au 3ème jour ou plus
+    // (consec >= 2 signifie : j1, j2 déjà passés, aujourd'hui = j3)
+    const hasData = consec >= 2;
 
     let nextCal, nextMode;
 
     if (prev.mode === "REMONTEE") {
-      if (i >= 3 && trend3 > 0) {
-        // Poids en hausse sur 3j → retour en BAISSE
+      if (hasData && trendFromStart > 0) {
+        // Poids supérieur au j1 de ce total → retour en BAISSE
         nextMode = "BAISSE";
         nextCal = Math.max(minCal, Math.min(maxCal, prev.cal - step));
       } else {
         nextMode = "REMONTEE";
-        if (i < 3) {
+        if (!hasData) {
+          // Pas encore assez de jours → on maintient
           nextCal = prev.cal;
-        } else if (trend3 < 0) {
-          // Poids en baisse → maintien (max 5j puis +200)
+        } else if (trendFromStart < 0) {
+          // Poids inférieur au j1 → baisse confirmée → maintien (max 5j puis +200)
           nextCal = consec >= 5 ? Math.min(maxCal, prev.cal + step) : prev.cal;
         } else {
-          // Poids stagne → +200 kcal
+          // Poids égal au j1 → stagne → +200 kcal
           nextCal = Math.min(maxCal, prev.cal + step);
         }
       }
     } else {
-      if (prev.cal === minCal && (atMin >= 5 || (atMin >= 3 && trend3 >= 0))) {
+      // MODE BAISSE
+      // Activation remontée si à minCal :
+      // - après 5j au même total
+      // - OU après 3j+ si poids stagne ou monte (>= j1)
+      const atMin = prev.cal === minCal;
+      const forceRemontee = atMin && (consec >= 5 || (hasData && trendFromStart >= 0));
+
+      if (forceRemontee) {
         nextMode = "REMONTEE";
         nextCal = Math.min(maxCal, minCal + step);
       } else {
         nextMode = "BAISSE";
-        if (i < 3) {
+        if (!hasData) {
+          // Pas encore 3j → on maintient
           nextCal = prev.cal;
         } else if (consec >= 5) {
+          // 5j au même total → on force la baisse
           nextCal = Math.max(minCal, prev.cal - step);
-        } else if (trend3 < 0) {
+        } else if (trendFromStart < 0) {
+          // Poids inférieur au j1 → baisse → on maintient
           nextCal = prev.cal;
         } else {
+          // Poids égal ou supérieur au j1 → stagne/monte → -200 kcal
           nextCal = Math.max(minCal, prev.cal - step);
         }
       }
@@ -1298,6 +1311,5 @@ window.addEventListener("resize", () => {
   if (currentTab === "graphe") renderGraphe(document.getElementById("content"));
 });
 </script>
-
 </body>
 </html>
