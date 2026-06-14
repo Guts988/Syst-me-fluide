@@ -131,7 +131,49 @@
     overflow-x: auto;
     scrollbar-width: none;
   }
-  .nav::-webkit-scrollbar { display: none; }
+  .nav/* ── PROG ── */
+.add-session-btn { background-color: #3a3a8a; border: 1px solid #7b7bff; color: #7b7bff; border-radius: 8px; padding: 13px 20px; font-family: ui-monospace, monospace; font-size: 12px; letter-spacing: 1px; width: 80%; display: block; margin: 0 auto 20px; text-align: center; cursor: pointer; }
+.session-card { background-color: #0e0e1c; border: 1px solid #1e1e3a; border-radius: 12px; margin-bottom: 14px; overflow: hidden; transition: border-color 0.2s; }
+.session-card.drag-over { border-color: #7b7bff; background-color: #0d0d20; }
+.session-card.dragging { opacity: 0.3; }
+.session-header { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background-color: #13132a; border-bottom: 1px solid #1e1e3a; }
+.session-name-input { background: transparent; border: none; color: #e8e8ff; font-family: system-ui, -apple-system, sans-serif; font-size: 15px; font-weight: 700; flex: 1; outline: none; min-width: 0; }
+.drag-handle { color: #3a3a5a; font-size: 18px; cursor: grab; padding: 4px 6px; touch-action: none; flex-shrink: 0; user-select: none; line-height: 1; }
+.exercise-row { padding: 10px 14px; border-bottom: 1px solid #0f0f22; transition: all 0.15s; }
+.exercise-row.drag-over { background-color: #1a1a30; border-left: 2px solid #7b7bff; }
+.exercise-row.dragging { opacity: 0.3; }
+.ex-row-top { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.ex-name-input { background: transparent; border: none; border-bottom: 1px solid #2a2a4a; color: #e8e8ff; font-family: ui-monospace, monospace; font-size: 13px; flex: 1; outline: none; padding: 3px 0; min-width: 0; }
+.ex-params { display: flex; gap: 8px; padding-left: 28px; }
+.ex-param { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0; }
+.ex-param label { font-size: 9px; letter-spacing: 2px; color: #5a5a8a; text-transform: uppercase; }
+.ex-num { width: 100%; padding: 6px 4px; font-size: 14px; font-weight: 500; text-align: center; }
+.add-ex-btn { background: none; border: none; color: #5a5a8a; font-family: ui-monospace, monospace; font-size: 11px; padding: 10px 14px; cursor: pointer; text-align: left; width: 100%; letter-spacing: 1px; display: block; }
+.ghost-el { position: fixed; pointer-events: none; z-index: 9999; background-color: #13132a; border: 1px solid #7b7bff; border-radius: 8px; padding: 8px 16px; color: #7b7bff; font-family: ui-monospace, monospace; font-size: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.7); white-space: nowrap; transform: rotate(1.5deg); }
+
+/* ── TIMER & SERIES ── */
+.timer-wrap { padding: 8px 14px 6px; background-color: #0a0a18; border-bottom: 1px solid #1e1e3a; }
+.timer-selector { display: flex; align-items: center; gap: 8px; }
+.timer-label { font-size: 10px; letter-spacing: 2px; color: #5a5a8a; text-transform: uppercase; }
+.timer-select { background-color: #0e0e1c; border: 1px solid #2a2a4a; color: #e8e8ff; border-radius: 6px; padding: 4px 8px; font-family: ui-monospace, monospace; font-size: 12px; outline: none; }
+.timer-countdown { margin-top: 8px; flex-direction: column; gap: 4px; }
+.timer-bar-wrap { height: 4px; background-color: #1e1e3a; border-radius: 2px; overflow: hidden; }
+.timer-bar-fill { height: 100%; background-color: #7b7bff; border-radius: 2px; transition: width 1s linear; }
+.timer-time-row { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; }
+.timer-num { font-family: system-ui, -apple-system, sans-serif; font-size: 28px; font-weight: 800; color: #7b7bff; line-height: 1; }
+.timer-stop-btn { background-color: #1e1e3a; border: 1px solid #3a3a5a; color: #5a5a8a; border-radius: 50%; width: 26px; height: 26px; font-size: 11px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.series-list { padding: 4px 14px 0; }
+.series-row { display: flex; align-items: center; gap: 6px; padding: 8px 0; border-bottom: 1px solid #0f0f22; transition: opacity 0.2s; }
+.series-row:last-child { border-bottom: none; }
+.series-done { opacity: 0.4; }
+.series-cb { width: 22px; height: 22px; accent-color: #7b7bff; cursor: pointer; flex-shrink: 0; }
+.series-num { width: 52px !important; padding: 5px 4px !important; font-size: 14px !important; font-weight: 500; text-align: center; }
+.series-sep { color: #5a5a8a; font-size: 11px; flex-shrink: 0; letter-spacing: 0; }
+.add-series-btn { background: none; border: none; color: #5a5a8a; font-family: ui-monospace, monospace; font-size: 11px; padding: 8px 14px; cursor: pointer; letter-spacing: 1px; display: block; }
+.sess-done-wrap { display: flex; align-items: center; gap: 10px; padding: 12px 14px; cursor: pointer; color: #4dfa8a; font-size: 12px; letter-spacing: 1px; font-family: ui-monospace, monospace; border-top: 1px solid #1e1e3a; background-color: #081a10; }
+.sess-done-wrap input[type=checkbox] { width: 22px; height: 22px; accent-color: #4dfa8a; cursor: pointer; flex-shrink: 0; }
+
+::-webkit-scrollbar { display: none; }
 
   .tab {
     background: none;
@@ -517,7 +559,49 @@
   margin-bottom: 14px;
 }
 /* scrollbar */
-  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  /* ── PROG ── */
+.add-session-btn { background-color: #3a3a8a; border: 1px solid #7b7bff; color: #7b7bff; border-radius: 8px; padding: 13px 20px; font-family: ui-monospace, monospace; font-size: 12px; letter-spacing: 1px; width: 80%; display: block; margin: 0 auto 20px; text-align: center; cursor: pointer; }
+.session-card { background-color: #0e0e1c; border: 1px solid #1e1e3a; border-radius: 12px; margin-bottom: 14px; overflow: hidden; transition: border-color 0.2s; }
+.session-card.drag-over { border-color: #7b7bff; background-color: #0d0d20; }
+.session-card.dragging { opacity: 0.3; }
+.session-header { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background-color: #13132a; border-bottom: 1px solid #1e1e3a; }
+.session-name-input { background: transparent; border: none; color: #e8e8ff; font-family: system-ui, -apple-system, sans-serif; font-size: 15px; font-weight: 700; flex: 1; outline: none; min-width: 0; }
+.drag-handle { color: #3a3a5a; font-size: 18px; cursor: grab; padding: 4px 6px; touch-action: none; flex-shrink: 0; user-select: none; line-height: 1; }
+.exercise-row { padding: 10px 14px; border-bottom: 1px solid #0f0f22; transition: all 0.15s; }
+.exercise-row.drag-over { background-color: #1a1a30; border-left: 2px solid #7b7bff; }
+.exercise-row.dragging { opacity: 0.3; }
+.ex-row-top { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.ex-name-input { background: transparent; border: none; border-bottom: 1px solid #2a2a4a; color: #e8e8ff; font-family: ui-monospace, monospace; font-size: 13px; flex: 1; outline: none; padding: 3px 0; min-width: 0; }
+.ex-params { display: flex; gap: 8px; padding-left: 28px; }
+.ex-param { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0; }
+.ex-param label { font-size: 9px; letter-spacing: 2px; color: #5a5a8a; text-transform: uppercase; }
+.ex-num { width: 100%; padding: 6px 4px; font-size: 14px; font-weight: 500; text-align: center; }
+.add-ex-btn { background: none; border: none; color: #5a5a8a; font-family: ui-monospace, monospace; font-size: 11px; padding: 10px 14px; cursor: pointer; text-align: left; width: 100%; letter-spacing: 1px; display: block; }
+.ghost-el { position: fixed; pointer-events: none; z-index: 9999; background-color: #13132a; border: 1px solid #7b7bff; border-radius: 8px; padding: 8px 16px; color: #7b7bff; font-family: ui-monospace, monospace; font-size: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.7); white-space: nowrap; transform: rotate(1.5deg); }
+
+/* ── TIMER & SERIES ── */
+.timer-wrap { padding: 8px 14px 6px; background-color: #0a0a18; border-bottom: 1px solid #1e1e3a; }
+.timer-selector { display: flex; align-items: center; gap: 8px; }
+.timer-label { font-size: 10px; letter-spacing: 2px; color: #5a5a8a; text-transform: uppercase; }
+.timer-select { background-color: #0e0e1c; border: 1px solid #2a2a4a; color: #e8e8ff; border-radius: 6px; padding: 4px 8px; font-family: ui-monospace, monospace; font-size: 12px; outline: none; }
+.timer-countdown { margin-top: 8px; flex-direction: column; gap: 4px; }
+.timer-bar-wrap { height: 4px; background-color: #1e1e3a; border-radius: 2px; overflow: hidden; }
+.timer-bar-fill { height: 100%; background-color: #7b7bff; border-radius: 2px; transition: width 1s linear; }
+.timer-time-row { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; }
+.timer-num { font-family: system-ui, -apple-system, sans-serif; font-size: 28px; font-weight: 800; color: #7b7bff; line-height: 1; }
+.timer-stop-btn { background-color: #1e1e3a; border: 1px solid #3a3a5a; color: #5a5a8a; border-radius: 50%; width: 26px; height: 26px; font-size: 11px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.series-list { padding: 4px 14px 0; }
+.series-row { display: flex; align-items: center; gap: 6px; padding: 8px 0; border-bottom: 1px solid #0f0f22; transition: opacity 0.2s; }
+.series-row:last-child { border-bottom: none; }
+.series-done { opacity: 0.4; }
+.series-cb { width: 22px; height: 22px; accent-color: #7b7bff; cursor: pointer; flex-shrink: 0; }
+.series-num { width: 52px !important; padding: 5px 4px !important; font-size: 14px !important; font-weight: 500; text-align: center; }
+.series-sep { color: #5a5a8a; font-size: 11px; flex-shrink: 0; letter-spacing: 0; }
+.add-series-btn { background: none; border: none; color: #5a5a8a; font-family: ui-monospace, monospace; font-size: 11px; padding: 8px 14px; cursor: pointer; letter-spacing: 1px; display: block; }
+.sess-done-wrap { display: flex; align-items: center; gap: 10px; padding: 12px 14px; cursor: pointer; color: #4dfa8a; font-size: 12px; letter-spacing: 1px; font-family: ui-monospace, monospace; border-top: 1px solid #1e1e3a; background-color: #081a10; }
+.sess-done-wrap input[type=checkbox] { width: 22px; height: 22px; accent-color: #4dfa8a; cursor: pointer; flex-shrink: 0; }
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
   ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
 </style>
@@ -528,7 +612,7 @@
   <div class="header">
     <div class="header-top">
       <div class="logo-area">
-        <div class="eyebrow">Système fluide</div>
+        <div class="eyebrow">Protocole Calorique</div>
         <h1>Calorie Tracker</h1>
       </div>
     </div>
@@ -1257,52 +1341,295 @@ function deletePas(date) {
 // ══════════════════════════════════════════════
 // PROG
 // ══════════════════════════════════════════════
+// ── PROG ──
+function genId() { return Math.random().toString(36).slice(2,9); }
+function escH(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'); }
+function initProg() { if (!state.prog) state.prog = []; }
+
+function migrateProg() {
+  initProg();
+  state.prog = state.prog.map(sess => ({
+    ...sess,
+    exercises: (sess.exercises||[]).map(ex => {
+      if (ex.series) return ex;
+      const n = ex.sets || 1;
+      return {
+        id: ex.id, name: ex.name, restTime: ex.restTime || 90,
+        series: Array.from({length: n}, () => ({ id: genId(), reps: ex.reps||8, weight: ex.weight||0, done: false }))
+      };
+    })
+  }));
+}
+
+// ── TIMER ──
+let tmr = { running: false, exId: null, remaining: 0, total: 0, iv: null };
+
+function startTimer(exId, seconds) {
+  if (tmr.iv) clearInterval(tmr.iv);
+  tmr = { running: true, exId, remaining: seconds, total: seconds, iv: null };
+  const cd = document.getElementById('tcd-' + exId);
+  if (cd) cd.style.display = 'flex';
+  updateTimerDOM();
+  tmr.iv = setInterval(tickTimer, 1000);
+}
+
+function stopTimer() {
+  if (tmr.iv) clearInterval(tmr.iv);
+  const exId = tmr.exId;
+  tmr = { running: false, exId: null, remaining: 0, total: 0, iv: null };
+  const cd = document.getElementById('tcd-' + exId);
+  if (cd) cd.style.display = 'none';
+}
+
+function tickTimer() {
+  tmr.remaining--;
+  if (tmr.remaining <= 0) {
+    if (navigator.vibrate) navigator.vibrate([300,100,300,100,300]);
+    stopTimer(); return;
+  }
+  updateTimerDOM();
+}
+
+function updateTimerDOM() {
+  const timeEl = document.getElementById('ttd-' + tmr.exId);
+  const fillEl = document.getElementById('tpf-' + tmr.exId);
+  if (!timeEl) return;
+  const m = Math.floor(tmr.remaining / 60);
+  const s = tmr.remaining % 60;
+  timeEl.textContent = m + ':' + s.toString().padStart(2,'0');
+  if (fillEl) fillEl.style.width = ((tmr.remaining / tmr.total) * 100) + '%';
+}
+
+function timeOptions(selected) {
+  let html = '';
+  for (let s = 15; s <= 240; s += 15) {
+    const m = Math.floor(s/60), sec = s%60;
+    const label = m > 0 ? (sec > 0 ? m+'min '+sec+'s' : m+'min') : s+'s';
+    html += '<option value="'+s+'"'+(s===selected?' selected':'')+'>'+label+'</option>';
+  }
+  return html;
+}
+
+function setRestTime(sid, eid, val) {
+  const s = state.prog.find(s=>s.id===sid);
+  const e = s?.exercises.find(e=>e.id===eid);
+  if (e) { e.restTime = parseInt(val); saveState(); }
+}
+
+// ── SERIES CRUD ──
+function addSeries(sid, eid) {
+  const s = state.prog.find(s=>s.id===sid);
+  const e = s?.exercises.find(e=>e.id===eid);
+  if (!e) return;
+  const last = e.series[e.series.length-1];
+  e.series.push({ id: genId(), reps: last?.reps||8, weight: last?.weight||0, done: false });
+  saveState(); render();
+}
+
+function delSeries(sid, eid, srid) {
+  const s = state.prog.find(s=>s.id===sid);
+  const e = s?.exercises.find(e=>e.id===eid);
+  if (e && e.series.length > 1) { e.series = e.series.filter(sr=>sr.id!==srid); saveState(); render(); }
+}
+
+function updateSeries(sid, eid, srid, field, val) {
+  const s = state.prog.find(s=>s.id===sid);
+  const e = s?.exercises.find(e=>e.id===eid);
+  const sr = e?.series.find(sr=>sr.id===srid);
+  if (sr) { sr[field] = parseFloat(val)||0; saveState(); }
+}
+
+function toggleSeries(sid, eid, srid, checked) {
+  const s = state.prog.find(s=>s.id===sid);
+  const e = s?.exercises.find(e=>e.id===eid);
+  const sr = e?.series.find(sr=>sr.id===srid);
+  if (!sr) return;
+  sr.done = checked;
+  saveState();
+  const row = document.getElementById('sr-'+srid);
+  if (row) row.classList.toggle('series-done', checked);
+  if (checked && e.restTime) startTimer(eid, e.restTime);
+}
+
+// ── SESSION CRUD ──
+function addSession() {
+  initProg();
+  state.prog.push({ id: genId(), name: 'Séance '+(state.prog.length+1), exercises: [] });
+  saveState(); render();
+}
+function delSession(sid) {
+  if (!confirm('Supprimer cette séance ?')) return;
+  state.prog = state.prog.filter(s=>s.id!==sid);
+  saveState(); render();
+}
+function renameSession(sid, v) {
+  const s = state.prog.find(s=>s.id===sid);
+  if (s) { s.name = v; saveState(); }
+}
+function addExercise(sid) {
+  const s = state.prog.find(s=>s.id===sid);
+  if (s) {
+    s.exercises.push({ id: genId(), name: '', restTime: 90, series: [{ id: genId(), reps: 8, weight: 0, done: false }] });
+    saveState(); render();
+  }
+}
+function delExercise(sid, eid) {
+  const s = state.prog.find(s=>s.id===sid);
+  if (s) { s.exercises = s.exercises.filter(e=>e.id!==eid); saveState(); render(); }
+}
+function renameExercise(sid, eid, v) {
+  const s = state.prog.find(s=>s.id===sid);
+  const e = s?.exercises.find(e=>e.id===eid);
+  if (e) { e.name = v; saveState(); }
+}
+function completeSession(sid) {
+  const s = state.prog.find(s=>s.id===sid);
+  if (!s) return;
+  s.exercises.forEach(e => e.series.forEach(sr => sr.done = false));
+  saveState();
+  const cb = document.getElementById('sess-done-'+sid);
+  if (cb) setTimeout(() => cb.checked = false, 500);
+  s.exercises.forEach(e => e.series.forEach(sr => {
+    const row = document.getElementById('sr-'+sr.id);
+    if (row) row.classList.remove('series-done');
+  }));
+  if (tmr.running) stopTimer();
+}
+
+// ── DRAG ──
+let tDrag = null;
+function startDrag(e, type, si, ei) {
+  e.preventDefault();
+  const touch = e.touches[0];
+  migrateProg();
+  const label = type==='session' ? (state.prog[si]?.name||'Séance') : (state.prog[si]?.exercises[ei]?.name||'Exercice');
+  const ghost = document.createElement('div');
+  ghost.className = 'ghost-el';
+  ghost.textContent = '☰  '+label;
+  ghost.style.left = (touch.clientX-20)+'px';
+  ghost.style.top = (touch.clientY-20)+'px';
+  document.body.appendChild(ghost);
+  tDrag = { type, si, ei, ghost, over: null };
+  document.addEventListener('touchmove', onDragMove, { passive: false });
+  document.addEventListener('touchend', onDragEnd);
+}
+function onDragMove(e) {
+  if (!tDrag) return;
+  e.preventDefault();
+  const touch = e.touches[0];
+  tDrag.ghost.style.left = (touch.clientX-20)+'px';
+  tDrag.ghost.style.top = (touch.clientY-20)+'px';
+  if (tDrag.over) { tDrag.over.classList.remove('drag-over'); tDrag.over = null; }
+  tDrag.ghost.style.visibility = 'hidden';
+  const el = document.elementFromPoint(touch.clientX, touch.clientY);
+  tDrag.ghost.style.visibility = '';
+  if (!el) return;
+  if (tDrag.type==='session') {
+    const card = el.closest('.session-card');
+    if (card) { card.classList.add('drag-over'); tDrag.over = card; }
+  } else {
+    const row = el.closest('.exercise-row');
+    if (row) { row.classList.add('drag-over'); tDrag.over = row; }
+  }
+}
+function onDragEnd(e) {
+  if (!tDrag) return;
+  document.removeEventListener('touchmove', onDragMove);
+  document.removeEventListener('touchend', onDragEnd);
+  tDrag.ghost.remove();
+  if (tDrag.over) tDrag.over.classList.remove('drag-over');
+  const touch = e.changedTouches[0];
+  tDrag.ghost.style.visibility = 'hidden';
+  const el = document.elementFromPoint(touch.clientX, touch.clientY);
+  if (el) {
+    if (tDrag.type==='session') {
+      const card = el.closest('.session-card');
+      if (card) {
+        const tid = card.id.replace('sc-','');
+        const tidx = state.prog.findIndex(s=>s.id===tid);
+        if (tidx!==-1 && tidx!==tDrag.si) { const [m]=state.prog.splice(tDrag.si,1); state.prog.splice(tidx,0,m); saveState(); }
+      }
+    } else {
+      const row = el.closest('.exercise-row');
+      if (row) {
+        const tid = row.id.replace('ec-','');
+        const sess = state.prog[tDrag.si];
+        if (sess) {
+          const tidx = sess.exercises.findIndex(ex=>ex.id===tid);
+          if (tidx!==-1 && tidx!==tDrag.ei) { const [m]=sess.exercises.splice(tDrag.ei,1); sess.exercises.splice(tidx,0,m); saveState(); }
+        }
+      }
+    }
+  }
+  tDrag = null; render();
+}
+
+// ── RENDER PROG ──
 function renderProg(c) {
-  const jours = [
-    { j: "J1", nom: "Upper 1" },
-    { j: "J2", nom: "Lower 1" },
-    { j: "J3", nom: "Upper 2" },
-    { j: "J4", nom: "Fractionné" },
-    { j: "J5", nom: "Upper 3" },
-    { j: "J6", nom: "Lower 2" },
-    { j: "J7", nom: "Upper 4" },
-    { j: "J8", nom: "Seuil" },
-  ];
+  migrateProg();
+  const prog = state.prog;
+  let html = '<button class="add-session-btn" onclick="addSession()">+ AJOUTER UNE SÉANCE</button>';
 
-  const colors = ["#7b7bff","#4dfa8a","#7b7bff","#ffd166","#7b7bff","#4dfa8a","#7b7bff","#ff6b6b"];
+  prog.forEach((sess, si) => {
+    html += '<div class="session-card" id="sc-'+sess.id+'">'
+      + '<div class="session-header">'
+      + '<span class="drag-handle" ontouchstart="startDrag(event,\'session\','+si+',-1)">☰</span>'
+      + '<input class="session-name-input" value="'+escH(sess.name)+'" onblur="renameSession(\''+sess.id+'\',this.value)" placeholder="Nom de la séance"/>'
+      + '<button class="del-btn" onclick="delSession(\''+sess.id+'\')">✕</button>'
+      + '</div><div class="exercises-list">';
 
-  let html = '<div style="display:flex;flex-direction:column;gap:10px;">';
-  jours.forEach((j, i) => {
-    html += `
-      <div style="
-        background:var(--surface);
-        border:1px solid var(--border);
-        border-left:3px solid ${colors[i]};
-        border-radius:var(--radius);
-        padding:16px 18px;
-        display:flex;
-        align-items:center;
-        gap:16px;
-      ">
-        <div style="
-          font-family:var(--display);
-          font-size:13px;
-          font-weight:800;
-          color:${colors[i]};
-          min-width:28px;
-          letter-spacing:1px;
-        ">${j.j}</div>
-        <div style="
-          font-family:var(--display);
-          font-size:16px;
-          font-weight:700;
-          color:var(--text);
-        ">${j.nom}</div>
-      </div>`;
+    sess.exercises.forEach((ex, ei) => {
+      html += '<div class="exercise-row" id="ec-'+ex.id+'">'
+        + '<div class="ex-row-top">'
+        + '<span class="drag-handle" ontouchstart="startDrag(event,\'exercise\','+si+','+ei+')">☰</span>'
+        + '<input class="ex-name-input" value="'+escH(ex.name)+'" onblur="renameExercise(\''+sess.id+'\',\''+ex.id+'\',this.value)" placeholder="Nom de l\'exercice"/>'
+        + '<button class="del-btn" onclick="delExercise(\''+sess.id+'\',\''+ex.id+'\')">✕</button>'
+        + '</div>'
+        + '<div class="timer-wrap">'
+        + '<div class="timer-selector">'
+        + '<span style="font-size:14px">⏱</span>'
+        + '<span class="timer-label">Repos</span>'
+        + '<select class="timer-select" onchange="setRestTime(\''+sess.id+'\',\''+ex.id+'\',this.value)">'
+        + timeOptions(ex.restTime||90)
+        + '</select></div>'
+        + '<div class="timer-countdown" id="tcd-'+ex.id+'" style="display:none">'
+        + '<div class="timer-bar-wrap"><div class="timer-bar-fill" id="tpf-'+ex.id+'" style="width:100%"></div></div>'
+        + '<div class="timer-time-row">'
+        + '<span class="timer-num" id="ttd-'+ex.id+'">0:00</span>'
+        + '<button class="timer-stop-btn" onclick="stopTimer()">✕</button>'
+        + '</div></div></div>'
+        + '<div class="series-list">';
+
+      ex.series.forEach(sr => {
+        html += '<div class="series-row'+(sr.done?' series-done':'')+'" id="sr-'+sr.id+'">'
+          + '<input type="checkbox" class="series-cb"'+(sr.done?' checked':'')+' onchange="toggleSeries(\''+sess.id+'\',\''+ex.id+'\',\''+sr.id+'\',this.checked)"/>'
+          + '<input type="number" class="input series-num" value="'+sr.reps+'" min="1" onchange="updateSeries(\''+sess.id+'\',\''+ex.id+'\',\''+sr.id+'\',\'reps\',this.value)"/>'
+          + '<span class="series-sep">reps</span>'
+          + '<input type="number" class="input series-num" value="'+sr.weight+'" min="0" step="0.5" onchange="updateSeries(\''+sess.id+'\',\''+ex.id+'\',\''+sr.id+'\',\'weight\',this.value)"/>'
+          + '<span class="series-sep">kg</span>'
+          + '<button class="del-btn" onclick="delSeries(\''+sess.id+'\',\''+ex.id+'\',\''+sr.id+'\')">✕</button>'
+          + '</div>';
+      });
+
+      html += '</div>'
+        + '<button class="add-series-btn" onclick="addSeries(\''+sess.id+'\',\''+ex.id+'\')">+ Ajouter une série</button>'
+        + '</div>';
+    });
+
+    html += '</div>'
+      + '<button class="add-ex-btn" onclick="addExercise(\''+sess.id+'\')">+ Ajouter un exercice</button>'
+      + '<label class="sess-done-wrap">'
+      + '<input type="checkbox" id="sess-done-'+sess.id+'" onchange="if(this.checked) completeSession(\''+sess.id+'\')">'
+      + '<span>✅ Séance terminée</span></label>'
+      + '</div>';
   });
-  html += '</div>';
+
+  if (!prog.length) {
+    html += '<div class="empty"><div class="empty-icon">💪</div><p>Crée ta première séance<br>en appuyant sur le bouton ci-dessus.</p></div>';
+  }
   c.innerHTML = html;
 }
+
 
 // ══════════════════════════════════════════════
 // INIT
