@@ -4,710 +4,184 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Calorie Tracker</title>
-
 <style>
-  :root {
-    --bg: #07070f;
-    --surface: #0e0e1c;
-    --surface2: #13132a;
-    --border: #1e1e3a;
-    --border2: #2a2a4a;
-    --text: #e8e8ff;
-    --muted: #5a5a8a;
-    --dim: #3a3a5a;
-    --accent: #7b7bff;
-    --accent-dim: #3a3a8a;
-    --down: #ff6b6b;
-    --down-bg: #1a0808;
-    --down-dim: #ff6b6b22;
-    --up: #4dfa8a;
-    --up-bg: #081a10;
-    --up-dim: #4dfa8a22;
-    --gold: #ffd166;
-    --gold-dim: #ffd16622;
-    --radius: 10px;
-    --mono: ui-monospace, monospace;
-    --display: system-ui, -apple-system, sans-serif;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: ui-monospace, monospace;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  /* Subtle noise texture */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0.4;
-  }
-
-  .app {
-    position: relative;
-    z-index: 1;
-    max-width: 680px;
-    margin: 0 auto;
-    padding: 0 0 80px;
-  }
-
-  /* ── HEADER ── */
-  .header {
-    padding: 28px 20px 20px;
-    border-bottom: 1px solid var(--border);
-    background: linear-gradient(180deg, #0d0d1f 0%, transparent 100%);
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    backdrop-filter: blur(12px);
-  }
-
-  .header-top {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 12px;
-  }
-
-  .logo-area { flex: 1; }
-
-  .eyebrow {
-    font-size: 9px;
-    letter-spacing: 4px;
-    color: var(--muted);
-    text-transform: uppercase;
-    margin-bottom: 4px;
-  }
-
-  h1 {
-    font-family: system-ui, -apple-system, sans-serif;
-    font-size: 22px;
-    font-weight: 800;
-    color: var(--text);
-    letter-spacing: -0.5px;
-  }
-
-  .header-stats {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-top: 14px;
-  }
-
-  .stat-pill {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 4px 12px;
-    font-size: 11px;
-    color: var(--muted);
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .stat-pill .val {
-    color: var(--text);
-    font-weight: 500;
-  }
-
-  .stat-pill.mode-baisse { border-color: var(--down-dim); color: var(--down); background: var(--down-bg); }
-  .stat-pill.mode-remontee { border-color: var(--up-dim); color: var(--up); background: var(--up-bg); }
-
-  /* ── NAV TABS ── */
-  .nav {
-    display: flex;
-    padding: 0 20px;
-    gap: 0;
-    border-bottom: 1px solid var(--border);
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-  .nav/* ── PROG ── */
-.add-session-btn { background-color: #3a3a8a; border: 1px solid #7b7bff; color: #7b7bff; border-radius: 8px; padding: 13px 20px; font-family: ui-monospace, monospace; font-size: 12px; letter-spacing: 1px; width: 80%; display: block; margin: 0 auto 20px; text-align: center; cursor: pointer; }
-.session-card { background-color: #0e0e1c; border: 1px solid #1e1e3a; border-radius: 12px; margin-bottom: 14px; overflow: hidden; transition: border-color 0.2s; }
-.session-card.drag-over { border-color: #7b7bff; background-color: #0d0d20; }
-.session-card.dragging { opacity: 0.3; }
-.session-header { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background-color: #13132a; border-bottom: 1px solid #1e1e3a; }
-.session-name-input { background: transparent; border: none; color: #e8e8ff; font-family: system-ui, -apple-system, sans-serif; font-size: 15px; font-weight: 700; flex: 1; outline: none; min-width: 0; }
-.drag-handle { color: #3a3a5a; font-size: 18px; cursor: grab; padding: 4px 6px; touch-action: none; flex-shrink: 0; user-select: none; line-height: 1; }
-.exercise-row { padding: 10px 14px; border-bottom: 1px solid #0f0f22; transition: all 0.15s; }
-.exercise-row.drag-over { background-color: #1a1a30; border-left: 2px solid #7b7bff; }
-.exercise-row.dragging { opacity: 0.3; }
-.ex-row-top { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-.ex-name-input { background: transparent; border: none; border-bottom: 1px solid #2a2a4a; color: #e8e8ff; font-family: ui-monospace, monospace; font-size: 13px; flex: 1; outline: none; padding: 3px 0; min-width: 0; }
-.ex-params { display: flex; gap: 8px; padding-left: 28px; }
-.ex-param { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0; }
-.ex-param label { font-size: 9px; letter-spacing: 2px; color: #5a5a8a; text-transform: uppercase; }
-.ex-num { width: 100%; padding: 6px 4px; font-size: 14px; font-weight: 500; text-align: center; }
-.add-ex-btn { background: none; border: none; color: #5a5a8a; font-family: ui-monospace, monospace; font-size: 11px; padding: 10px 14px; cursor: pointer; text-align: left; width: 100%; letter-spacing: 1px; display: block; }
-.ghost-el { position: fixed; pointer-events: none; z-index: 9999; background-color: #13132a; border: 1px solid #7b7bff; border-radius: 8px; padding: 8px 16px; color: #7b7bff; font-family: ui-monospace, monospace; font-size: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.7); white-space: nowrap; transform: rotate(1.5deg); }
-
-/* ── TIMER & SERIES ── */
-.timer-wrap { padding: 8px 14px 6px; background-color: #0a0a18; border-bottom: 1px solid #1e1e3a; }
-.timer-selector { display: flex; align-items: center; gap: 8px; }
-.timer-label { font-size: 10px; letter-spacing: 2px; color: #5a5a8a; text-transform: uppercase; }
-.timer-select { background-color: #0e0e1c; border: 1px solid #2a2a4a; color: #e8e8ff; border-radius: 6px; padding: 4px 8px; font-family: ui-monospace, monospace; font-size: 12px; outline: none; }
-.timer-countdown { margin-top: 8px; flex-direction: column; gap: 4px; }
-.timer-bar-wrap { height: 4px; background-color: #1e1e3a; border-radius: 2px; overflow: hidden; }
-.timer-bar-fill { height: 100%; background-color: #7b7bff; border-radius: 2px; transition: width 1s linear; }
-.timer-time-row { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; }
-.timer-num { font-family: system-ui, -apple-system, sans-serif; font-size: 28px; font-weight: 800; color: #7b7bff; line-height: 1; }
-.timer-stop-btn { background-color: #1e1e3a; border: 1px solid #3a3a5a; color: #5a5a8a; border-radius: 50%; width: 26px; height: 26px; font-size: 11px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-.series-list { padding: 4px 14px 0; }
-.series-row { display: flex; align-items: center; gap: 6px; padding: 8px 0; border-bottom: 1px solid #0f0f22; transition: opacity 0.2s; }
-.series-row:last-child { border-bottom: none; }
-.series-done { opacity: 0.4; }
-.series-cb { width: 22px; height: 22px; accent-color: #7b7bff; cursor: pointer; flex-shrink: 0; }
-.series-num { width: 52px !important; padding: 5px 4px !important; font-size: 14px !important; font-weight: 500; text-align: center; }
-.series-sep { color: #5a5a8a; font-size: 11px; flex-shrink: 0; letter-spacing: 0; }
-.add-series-btn { background: none; border: none; color: #5a5a8a; font-family: ui-monospace, monospace; font-size: 11px; padding: 8px 14px; cursor: pointer; letter-spacing: 1px; display: block; }
-.sess-done-wrap { display: flex; align-items: center; gap: 10px; padding: 12px 14px; cursor: pointer; color: #4dfa8a; font-size: 12px; letter-spacing: 1px; font-family: ui-monospace, monospace; border-top: 1px solid #1e1e3a; background-color: #081a10; }
-.sess-done-wrap input[type=checkbox] { width: 22px; height: 22px; accent-color: #4dfa8a; cursor: pointer; flex-shrink: 0; }
-
-/* ── PROG v2 ── */
-.session-header { display:flex; align-items:center; gap:10px; padding:13px 14px; cursor:pointer; }
-.edit-header { background-color:#0d0d20; cursor:default; }
-.active-header { background-color:#081a10; cursor:default; }
-.sess-arrow { color:#5a5a8a; font-size:11px; flex-shrink:0; }
-.sess-name { flex:1; font-family:system-ui,-apple-system,sans-serif; font-size:15px; font-weight:700; color:#e8e8ff; }
-.active-dot { font-size:16px; flex-shrink:0; }
-.active-label { font-size:9px; letter-spacing:3px; color:#4dfa8a; flex-shrink:0; }
-.start-btn { background-color:#081a10; border:1px solid #4dfa8a; color:#4dfa8a; border-radius:6px; padding:5px 10px; font-family:ui-monospace,monospace; font-size:11px; cursor:pointer; white-space:nowrap; flex-shrink:0; }
-.edit-btn { background-color:#1a1a3a; border:1px solid #7b7bff; color:#7b7bff; border-radius:6px; padding:5px 10px; font-family:ui-monospace,monospace; font-size:11px; cursor:pointer; white-space:nowrap; flex-shrink:0; }
-.done-edit-btn { background-color:#081a10; border:1px solid #4dfa8a; color:#4dfa8a; border-radius:6px; padding:5px 10px; font-family:ui-monospace,monospace; font-size:11px; cursor:pointer; white-space:nowrap; flex-shrink:0; }
-.done-edit-btn-full { background-color:#081a10; border:1px solid #4dfa8a; color:#4dfa8a; border-radius:8px; padding:12px 20px; font-family:ui-monospace,monospace; font-size:12px; letter-spacing:1px; width:80%; display:block; margin:14px auto 16px; text-align:center; cursor:pointer; }
-.start-session-btn { background-color:#081a10; border:1px solid #4dfa8a; color:#4dfa8a; border-radius:8px; padding:12px 20px; font-family:ui-monospace,monospace; font-size:12px; letter-spacing:1px; width:80%; display:block; margin:16px auto; text-align:center; cursor:pointer; }
-.sess-active { border-color:#4dfa8a44 !important; }
-.session-body { }
-.ex-view-row { padding:10px 16px; border-bottom:1px solid #0f0f22; }
-.ex-view-name { font-size:14px; font-weight:600; color:#e8e8ff; margin-bottom:4px; }
-.ex-view-rest { color:#5a5a8a; font-size:11px; font-weight:400; }
-.series-view { color:#5a5a8a; font-size:12px; padding:2px 0 2px 12px; }
-.ex-active-name { font-family:system-ui,-apple-system,sans-serif; font-size:14px; font-weight:700; color:#e8e8ff; padding:10px 14px 4px; }
-.timer-val { color:#7b7bff; font-size:12px; font-weight:500; }
-.series-val { color:#e8e8ff; font-size:14px; font-weight:500; flex:1; }
-
-::-webkit-scrollbar { display: none; }
-
-  .tab {
-    background: none;
-    border: none;
-    border-bottom: 2px solid transparent;
-    color: var(--muted);
-    padding: 12px 16px;
-    cursor: pointer;
-    font-family: ui-monospace, monospace;
-    font-size: 12px;
-    letter-spacing: 0.5px;
-    transition: all 0.2s;
-    white-space: nowrap;
-    margin-bottom: -1px;
-  }
-
-  .tab:hover { color: var(--dim); }
-  .tab.active { border-bottom-color: var(--accent); color: var(--text); }
-
-  /* ── CONTENT ── */
-  .content { padding: 20px; }
-
-  /* ── ENTRY FORM ── */
-  .add-entry {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 18px;
-    margin-bottom: 20px;
-  }
-
-  .add-entry-title {
-    font-family: system-ui, -apple-system, sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--muted);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    margin-bottom: 14px;
-  }
-
-  .entry-row {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    flex-wrap: wrap;
-    flex-direction: column;
-  }
-
-  .field { display: flex; flex-direction: column; gap: 5px; }
-  .field label { font-size: 10px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; }
-
-  .input {
-    background: var(--bg);
-    border: 1px solid var(--border2);
-    border-radius: 6px;
-    padding: 9px 12px;
-    color: var(--text);
-    font-family: ui-monospace, monospace;
-    font-size: 14px;
-    outline: none;
-    transition: border-color 0.2s;
-    width: 100%;
-  }
-
-  .input:focus { border-color: var(--accent-dim); }
-  .input::placeholder { color: var(--dim); }
-
-  .field-weight { width: 80%; }
-  .field-date { width: 80%; }
-
-  .btn {
-    background: var(--accent-dim);
-    border: 1px solid var(--accent);
-    color: var(--accent);
-    border-radius: 6px;
-    padding: 9px 18px;
-    font-family: ui-monospace, monospace;
-    font-size: 12px;
-    letter-spacing: 1px;
-    cursor: pointer;
-    transition: all 0.2s;
-    white-space: nowrap;
-    align-self: flex-end;
-  }
-
-  .btn:hover { background: var(--accent); color: #000; }
-
-  .btn-danger {
-    background: transparent;
-    border-color: var(--down);
-    color: var(--down);
-  }
-  .btn-danger:hover { background: var(--down); color: #000; }
-
-  .btn-sm {
-    padding: 5px 10px;
-    font-size: 10px;
-  }
-
-  /* ── TABLE ── */
-  .table-wrap { overflow-x: auto; }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-  }
-
-  thead th {
-    padding: 8px 12px;
-    background: var(--surface2);
-    color: var(--muted);
-    text-align: left;
-    border-bottom: 1px solid var(--border);
-    font-weight: 400;
-    font-size: 10px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    white-space: nowrap;
-  }
-
-  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; }
-  tbody tr:hover { background: var(--surface); }
-  tbody tr:last-child { border-bottom: none; }
-
-  td { padding: 10px 12px; vertical-align: middle; }
-
-  .td-day { color: var(--muted); font-size: 11px; white-space: nowrap; }
-  .td-date { color: var(--dim); font-size: 11px; white-space: nowrap; }
-
-  .td-weight { font-size: 15px; font-weight: 500; color: var(--text); }
-  .weight-delta { font-size: 10px; margin-top: 1px; }
-  .delta-down { color: var(--up); }
-  .delta-up { color: var(--down); }
-  .delta-same { color: var(--muted); }
-
-  .td-cal {
-    font-size: 16px;
-    font-weight: 500;
-    font-family: system-ui, -apple-system, sans-serif;
-    white-space: nowrap;
-  }
-
-  .mode-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 3px 8px;
-    border-radius: 4px;
-    font-size: 10px;
-    letter-spacing: 0.5px;
-    white-space: nowrap;
-  }
-  .mode-badge.baisse { background: var(--down-bg); color: var(--down); border: 1px solid var(--down-dim); }
-  .mode-badge.remontee { background: var(--up-bg); color: var(--up); border: 1px solid var(--up-dim); }
-
-  .status-icon { font-size: 14px; }
-
-  td.del-col { text-align: center; }
-  .del-btn {
-    background: none;
-    border: none;
-    color: var(--border2);
-    cursor: pointer;
-    font-size: 14px;
-    padding: 4px 6px;
-    border-radius: 4px;
-    transition: all 0.2s;
-  }
-  .del-btn:hover { color: var(--down); background: var(--down-bg); }
-
-  /* Row coloring by calories */
-  tr.cal-high { background: #0a1020; }
-  tr.cal-mid { background: #0a100a; }
-  tr.cal-low { background: #18080a; }
-  tr.cal-floor { background: #200808; }
-  tr.cal-rise { background: #081508; }
-
-  /* ── EMPTY STATE ── */
-  .empty {
-    text-align: center;
-    padding: 48px 20px;
-    color: var(--muted);
-  }
-  .empty-icon { font-size: 36px; margin-bottom: 12px; opacity: 0.4; }
-  .empty p { font-size: 13px; line-height: 1.7; }
-
-  /* ── TODAY BANNER ── */
-  .today-banner {
-    background: var(--surface);
-    border: 1px solid var(--border2);
-    border-left: 3px solid var(--accent);
-    border-radius: var(--radius);
-    padding: 16px 18px;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-
-  .today-label { font-size: 10px; letter-spacing: 3px; color: var(--muted); text-transform: uppercase; margin-bottom: 4px; }
-  .today-cal {
-    font-family: system-ui, -apple-system, sans-serif;
-    font-size: 32px;
-    font-weight: 800;
-    color: var(--text);
-    line-height: 1;
-  }
-  .today-cal.mode-r { color: var(--up); }
-  .today-cal.mode-b { color: var(--text); }
-  .today-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
-
-  /* ── CHART ── */
-  .chart-wrap {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 18px;
-    margin-bottom: 20px;
-  }
-
-  .chart-title {
-    font-size: 10px;
-    letter-spacing: 3px;
-    color: var(--muted);
-    text-transform: uppercase;
-    margin-bottom: 14px;
-  }
-
-  canvas { width: 100% !important; display: block; }
-
-  /* ── RULES ── */
-  .rules-phase {
-    border-radius: var(--radius);
-    overflow: hidden;
-    margin-bottom: 16px;
-    border: 1px solid;
-  }
-  .rules-phase.down { border-color: var(--down-dim); background: var(--down-bg); }
-  .rules-phase.up { border-color: var(--up-dim); background: var(--up-bg); }
-
-  .rules-header {
-    padding: 10px 16px;
-    font-family: system-ui, -apple-system, sans-serif;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-  }
-  .rules-phase.down .rules-header { color: var(--down); border-bottom: 1px solid var(--down-dim); }
-  .rules-phase.up .rules-header { color: var(--up); border-bottom: 1px solid var(--up-dim); }
-
-  .rules-list { padding: 12px 16px; }
-  .rule-item {
-    display: flex;
-    gap: 10px;
-    padding: 5px 0;
-    border-bottom: 1px solid #ffffff06;
-    font-size: 12px;
-    color: #aaa;
-    line-height: 1.5;
-  }
-  .rule-item:last-child { border-bottom: none; }
-  .rule-num { color: var(--dim); min-width: 16px; }
-
-  .info-box {
-    background: var(--surface);
-    border: 1px solid var(--border2);
-    border-radius: var(--radius);
-    padding: 14px 16px;
-    font-size: 12px;
-    color: var(--muted);
-    line-height: 1.8;
-  }
-  .info-box strong { color: var(--text); }
-
-  /* ── SETTINGS ── */
-  .settings-section { margin-bottom: 24px; }
-  .settings-title {
-    font-size: 10px;
-    letter-spacing: 3px;
-    color: var(--muted);
-    text-transform: uppercase;
-    margin-bottom: 12px;
-  }
-  .settings-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-  }
-  .settings-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 16px;
-    border-bottom: 1px solid var(--border);
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-  .settings-row:last-child { border-bottom: none; }
-  .settings-row label { font-size: 13px; color: var(--text); }
-  .settings-row .desc { font-size: 11px; color: var(--muted); margin-top: 2px; }
-  .settings-row input[type=number] { width: 90px; }
-
-  /* ── ANIMATIONS ── */
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(6px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .content > * { animation: fadeIn 0.25s ease both; }
-
-  /* ── RESPONSIVE ── */
-  @media (max-width: 500px) {
-    h1 { font-size: 18px; }
-    .today-cal { font-size: 26px; }
-    td, thead th { padding: 8px 8px; }
-    .tab { padding: 10px 12px; font-size: 11px; }
-  }
-
-  /* ── PAS ── */
-.pas-input-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 18px;
-  margin-bottom: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
+:root {
+  --bg:#07070f;--surface:#0e0e1c;--surface2:#13132a;
+  --border:#1e1e3a;--border2:#2a2a4a;
+  --text:#e8e8ff;--muted:#5a5a8a;--dim:#3a3a5a;
+  --accent:#7b7bff;--accent-dim:#3a3a8a;
+  --gold:#ffd166;--gold-dim:#ffd16622;
+  --up:#4dfa8a;--up-bg:#081a10;--up-dim:#4dfa8a22;
+  --down:#ff6b6b;--down-bg:#1a0808;--down-dim:#ff6b6b22;
+  --mass:#ff9f43;--mass-bg:#1a0f00;--mass-dim:#ff9f4322;
+  --radius:10px;
+  --mono:ui-monospace,monospace;
+  --display:system-ui,-apple-system,sans-serif;
 }
-.pas-input-row {
-  display: flex;
-  gap: 10px;
-  align-items: flex-end;
-  width: 80%;
-  flex-direction: column;
-}
-.pas-banner {
-  background: var(--surface);
-  border: 1px solid var(--border2);
-  border-left: 3px solid var(--gold);
-  border-radius: var(--radius);
-  padding: 16px 18px;
-  margin-bottom: 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-.pas-banner-val {
-  font-family: var(--display);
-  font-size: 32px;
-  font-weight: 800;
-  color: var(--gold);
-  line-height: 1;
-}
-.pas-banner-label {
-  font-size: 10px;
-  letter-spacing: 3px;
-  color: var(--muted);
-  text-transform: uppercase;
-  margin-bottom: 4px;
-}
-.pas-banner-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
-.pas-chart-wrap {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 18px;
-  margin-bottom: 20px;
-}
-.pas-chart-title {
-  font-size: 10px;
-  letter-spacing: 3px;
-  color: var(--muted);
-  text-transform: uppercase;
-  margin-bottom: 14px;
-}
-/* scrollbar */
-  /* ── PROG ── */
-.add-session-btn { background-color: #3a3a8a; border: 1px solid #7b7bff; color: #7b7bff; border-radius: 8px; padding: 13px 20px; font-family: ui-monospace, monospace; font-size: 12px; letter-spacing: 1px; width: 80%; display: block; margin: 0 auto 20px; text-align: center; cursor: pointer; }
-.session-card { background-color: #0e0e1c; border: 1px solid #1e1e3a; border-radius: 12px; margin-bottom: 14px; overflow: hidden; transition: border-color 0.2s; }
-.session-card.drag-over { border-color: #7b7bff; background-color: #0d0d20; }
-.session-card.dragging { opacity: 0.3; }
-.session-header { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background-color: #13132a; border-bottom: 1px solid #1e1e3a; }
-.session-name-input { background: transparent; border: none; color: #e8e8ff; font-family: system-ui, -apple-system, sans-serif; font-size: 15px; font-weight: 700; flex: 1; outline: none; min-width: 0; }
-.drag-handle { color: #3a3a5a; font-size: 18px; cursor: grab; padding: 4px 6px; touch-action: none; flex-shrink: 0; user-select: none; line-height: 1; }
-.exercise-row { padding: 10px 14px; border-bottom: 1px solid #0f0f22; transition: all 0.15s; }
-.exercise-row.drag-over { background-color: #1a1a30; border-left: 2px solid #7b7bff; }
-.exercise-row.dragging { opacity: 0.3; }
-.ex-row-top { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-.ex-name-input { background: transparent; border: none; border-bottom: 1px solid #2a2a4a; color: #e8e8ff; font-family: ui-monospace, monospace; font-size: 13px; flex: 1; outline: none; padding: 3px 0; min-width: 0; }
-.ex-params { display: flex; gap: 8px; padding-left: 28px; }
-.ex-param { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0; }
-.ex-param label { font-size: 9px; letter-spacing: 2px; color: #5a5a8a; text-transform: uppercase; }
-.ex-num { width: 100%; padding: 6px 4px; font-size: 14px; font-weight: 500; text-align: center; }
-.add-ex-btn { background: none; border: none; color: #5a5a8a; font-family: ui-monospace, monospace; font-size: 11px; padding: 10px 14px; cursor: pointer; text-align: left; width: 100%; letter-spacing: 1px; display: block; }
-.ghost-el { position: fixed; pointer-events: none; z-index: 9999; background-color: #13132a; border: 1px solid #7b7bff; border-radius: 8px; padding: 8px 16px; color: #7b7bff; font-family: ui-monospace, monospace; font-size: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.7); white-space: nowrap; transform: rotate(1.5deg); }
+*{box-sizing:border-box;margin:0;padding:0;}
+button{-webkit-appearance:none;appearance:none;font-family:var(--mono);cursor:pointer;}
+body{background:var(--bg);color:var(--text);font-family:var(--mono);min-height:100vh;overflow-x:hidden;}
+.app{max-width:680px;margin:0 auto;padding-bottom:80px;}
 
-/* ── TIMER & SERIES ── */
-.timer-wrap { padding: 8px 14px 6px; background-color: #0a0a18; border-bottom: 1px solid #1e1e3a; }
-.timer-selector { display: flex; align-items: center; gap: 8px; }
-.timer-label { font-size: 10px; letter-spacing: 2px; color: #5a5a8a; text-transform: uppercase; }
-.timer-select { background-color: #0e0e1c; border: 1px solid #2a2a4a; color: #e8e8ff; border-radius: 6px; padding: 4px 8px; font-family: ui-monospace, monospace; font-size: 12px; outline: none; }
-.timer-countdown { margin-top: 8px; flex-direction: column; gap: 4px; }
-.timer-bar-wrap { height: 4px; background-color: #1e1e3a; border-radius: 2px; overflow: hidden; }
-.timer-bar-fill { height: 100%; background-color: #7b7bff; border-radius: 2px; transition: width 1s linear; }
-.timer-time-row { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; }
-.timer-num { font-family: system-ui, -apple-system, sans-serif; font-size: 28px; font-weight: 800; color: #7b7bff; line-height: 1; }
-.timer-stop-btn { background-color: #1e1e3a; border: 1px solid #3a3a5a; color: #5a5a8a; border-radius: 50%; width: 26px; height: 26px; font-size: 11px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-.series-list { padding: 4px 14px 0; }
-.series-row { display: flex; align-items: center; gap: 6px; padding: 8px 0; border-bottom: 1px solid #0f0f22; transition: opacity 0.2s; }
-.series-row:last-child { border-bottom: none; }
-.series-done { opacity: 0.4; }
-.series-cb { width: 22px; height: 22px; accent-color: #7b7bff; cursor: pointer; flex-shrink: 0; }
-.series-num { width: 52px !important; padding: 5px 4px !important; font-size: 14px !important; font-weight: 500; text-align: center; }
-.series-sep { color: #5a5a8a; font-size: 11px; flex-shrink: 0; letter-spacing: 0; }
-.add-series-btn { background: none; border: none; color: #5a5a8a; font-family: ui-monospace, monospace; font-size: 11px; padding: 8px 14px; cursor: pointer; letter-spacing: 1px; display: block; }
-.sess-done-wrap { display: flex; align-items: center; gap: 10px; padding: 12px 14px; cursor: pointer; color: #4dfa8a; font-size: 12px; letter-spacing: 1px; font-family: ui-monospace, monospace; border-top: 1px solid #1e1e3a; background-color: #081a10; }
-.sess-done-wrap input[type=checkbox] { width: 22px; height: 22px; accent-color: #4dfa8a; cursor: pointer; flex-shrink: 0; }
+/* HEADER */
+.header{padding:24px 20px 16px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,#0d0d1f 0%,transparent 100%);position:sticky;top:0;z-index:10;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);}
+.eyebrow{font-size:9px;letter-spacing:4px;color:var(--muted);text-transform:uppercase;margin-bottom:4px;}
+.header h1{font-family:var(--display);font-size:22px;font-weight:800;letter-spacing:-0.5px;}
+.header-stats{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+.stat-pill{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:3px 12px;font-size:11px;color:var(--muted);display:flex;align-items:center;gap:5px;}
+.stat-pill .val{color:var(--text);font-weight:500;}
+.stat-pill.deficit{background:var(--down-bg);border-color:var(--down-dim);color:var(--down);}
+.stat-pill.reverse{background:var(--up-bg);border-color:var(--up-dim);color:var(--up);}
+.stat-pill.masse{background:var(--mass-bg);border-color:var(--mass-dim);color:var(--mass);}
 
-/* ── PROG v2 ── */
-.session-header { display:flex; align-items:center; gap:10px; padding:13px 14px; cursor:pointer; }
-.edit-header { background-color:#0d0d20; cursor:default; }
-.active-header { background-color:#081a10; cursor:default; }
-.sess-arrow { color:#5a5a8a; font-size:11px; flex-shrink:0; }
-.sess-name { flex:1; font-family:system-ui,-apple-system,sans-serif; font-size:15px; font-weight:700; color:#e8e8ff; }
-.active-dot { font-size:16px; flex-shrink:0; }
-.active-label { font-size:9px; letter-spacing:3px; color:#4dfa8a; flex-shrink:0; }
-.start-btn { background-color:#081a10; border:1px solid #4dfa8a; color:#4dfa8a; border-radius:6px; padding:5px 10px; font-family:ui-monospace,monospace; font-size:11px; cursor:pointer; white-space:nowrap; flex-shrink:0; }
-.edit-btn { background-color:#1a1a3a; border:1px solid #7b7bff; color:#7b7bff; border-radius:6px; padding:5px 10px; font-family:ui-monospace,monospace; font-size:11px; cursor:pointer; white-space:nowrap; flex-shrink:0; }
-.done-edit-btn { background-color:#081a10; border:1px solid #4dfa8a; color:#4dfa8a; border-radius:6px; padding:5px 10px; font-family:ui-monospace,monospace; font-size:11px; cursor:pointer; white-space:nowrap; flex-shrink:0; }
-.done-edit-btn-full { background-color:#081a10; border:1px solid #4dfa8a; color:#4dfa8a; border-radius:8px; padding:12px 20px; font-family:ui-monospace,monospace; font-size:12px; letter-spacing:1px; width:80%; display:block; margin:14px auto 16px; text-align:center; cursor:pointer; }
-.start-session-btn { background-color:#081a10; border:1px solid #4dfa8a; color:#4dfa8a; border-radius:8px; padding:12px 20px; font-family:ui-monospace,monospace; font-size:12px; letter-spacing:1px; width:80%; display:block; margin:16px auto; text-align:center; cursor:pointer; }
-.sess-active { border-color:#4dfa8a44 !important; }
-.session-body { }
-.ex-view-row { padding:10px 16px; border-bottom:1px solid #0f0f22; }
-.ex-view-name { font-size:14px; font-weight:600; color:#e8e8ff; margin-bottom:4px; }
-.ex-view-rest { color:#5a5a8a; font-size:11px; font-weight:400; }
-.series-view { color:#5a5a8a; font-size:12px; padding:2px 0 2px 12px; }
-.ex-active-name { font-family:system-ui,-apple-system,sans-serif; font-size:14px; font-weight:700; color:#e8e8ff; padding:10px 14px 4px; }
-.timer-val { color:#7b7bff; font-size:12px; font-weight:500; }
-.series-val { color:#e8e8ff; font-size:14px; font-weight:500; flex:1; }
+/* NAV */
+.nav{display:flex;padding:0 20px;border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;}
+.nav::-webkit-scrollbar{display:none;}
+.tab{background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);padding:11px 14px;font-size:11px;letter-spacing:0.5px;transition:all 0.2s;white-space:nowrap;margin-bottom:-1px;}
+.tab.active{border-bottom-color:var(--accent);color:var(--text);}
 
-::-webkit-scrollbar { width: 4px; height: 4px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+/* CONTENT */
+.content{padding:20px;}
+
+/* ENTRY FORM */
+.add-entry{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:20px;}
+.add-entry-title{font-family:var(--display);font-size:13px;font-weight:600;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;}
+.entry-row{display:flex;flex-direction:column;gap:12px;align-items:center;}
+.field{display:flex;flex-direction:column;gap:5px;width:80%;}
+.field label{font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;}
+.input{background:var(--bg);border:1px solid var(--border2);border-radius:6px;padding:9px 12px;color:var(--text);font-family:var(--mono);font-size:14px;outline:none;transition:border-color 0.2s;width:100%;}
+.input:focus{border-color:var(--accent-dim);}
+.input::placeholder{color:var(--dim);}
+.btn{background:var(--accent-dim);border:1px solid var(--accent);color:var(--accent);border-radius:6px;padding:9px 18px;font-size:12px;letter-spacing:1px;transition:all 0.2s;white-space:nowrap;text-align:center;width:80%;}
+.btn:hover{background:var(--accent);color:#000;}
+.btn-danger{background:transparent;border-color:var(--down);color:var(--down);}
+.btn-sm{padding:5px 10px;font-size:10px;width:auto;}
+
+/* TODAY BANNER */
+.today-banner{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);padding:16px 18px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.today-banner.mode-deficit{border-left:3px solid var(--down);}
+.today-banner.mode-reverse{border-left:3px solid var(--up);}
+.today-banner.mode-masse{border-left:3px solid var(--mass);}
+.today-label{font-size:10px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:4px;}
+.today-cal{font-family:var(--display);font-size:32px;font-weight:800;line-height:1;}
+.today-cal.c-deficit{color:var(--down);}
+.today-cal.c-reverse{color:var(--up);}
+.today-cal.c-masse{color:var(--mass);}
+.today-sub{font-size:11px;color:var(--muted);margin-top:4px;}
+
+/* TABLE */
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+thead th{padding:8px 12px;background:var(--surface2);color:var(--muted);text-align:left;border-bottom:1px solid var(--border);font-weight:400;font-size:10px;letter-spacing:2px;text-transform:uppercase;white-space:nowrap;}
+tbody tr{border-bottom:1px solid var(--border);transition:background 0.1s;}
+tbody tr:hover{background:var(--surface);}
+tbody tr:last-child{border-bottom:none;}
+td{padding:10px 12px;vertical-align:middle;}
+.td-day{color:var(--muted);font-size:11px;}
+.td-date{color:var(--dim);font-size:11px;}
+.td-weight{font-size:15px;font-weight:500;}
+.weight-delta{font-size:10px;margin-top:1px;}
+.delta-down{color:var(--up);}
+.delta-up{color:var(--down);}
+.delta-same{color:var(--muted);}
+.td-cal{font-size:16px;font-weight:500;font-family:var(--display);}
+td.del-col{text-align:center;}
+.del-btn{background:none;border:none;color:var(--border2);font-size:14px;padding:4px 6px;border-radius:4px;transition:all 0.2s;}
+.del-btn:hover{color:var(--down);background:var(--down-bg);}
+tr.r-down{background:#200808;}
+tr.r-mid{background:#18080a;}
+tr.r-low{background:#1a1a0a;}
+tr.r-up{background:#081508;}
+tr.r-mass{background:#0f0a00;}
+
+/* EMPTY */
+.empty{text-align:center;padding:48px 20px;color:var(--muted);}
+.empty-icon{font-size:36px;margin-bottom:12px;opacity:0.4;}
+.empty p{font-size:13px;line-height:1.7;}
+
+/* CHART */
+.chart-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:20px;}
+.chart-title{font-size:10px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:14px;}
+canvas{width:100%!important;display:block;}
+
+/* RULES */
+.rules-table-wrap{overflow-x:auto;margin-bottom:20px;}
+.rules-table{width:100%;border-collapse:collapse;font-size:12px;}
+.rules-table th{background:var(--surface2);color:var(--muted);padding:8px 10px;text-align:left;border:1px solid var(--border);font-size:10px;letter-spacing:1px;text-transform:uppercase;white-space:nowrap;}
+.rules-table td{padding:10px;border:1px solid var(--border);color:var(--text);vertical-align:top;line-height:1.5;}
+.rules-table td:first-child{font-weight:700;white-space:nowrap;}
+.phase-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:14px;overflow:hidden;}
+.phase-header{padding:10px 16px;font-family:var(--display);font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;border-bottom:1px solid var(--border);}
+.phase-body{padding:14px 16px;}
+.phase-section{margin-bottom:12px;}
+.phase-section-title{font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:6px;}
+.phase-item{display:flex;gap:8px;padding:4px 0;border-bottom:1px solid #ffffff06;font-size:12px;color:#aaa;line-height:1.5;}
+.phase-item:last-child{border-bottom:none;}
+.phase-dot{color:var(--dim);flex-shrink:0;}
+.info-note{background:var(--surface2);border-left:3px solid var(--accent);border-radius:0 6px 6px 0;padding:10px 14px;font-size:12px;color:var(--muted);line-height:1.7;margin-top:10px;}
+.info-note strong{color:var(--text);}
+
+/* SETTINGS */
+.settings-section{margin-bottom:24px;}
+.settings-title{font-size:10px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:12px;}
+.settings-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.settings-row{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);gap:12px;flex-wrap:wrap;}
+.settings-row:last-child{border-bottom:none;}
+.settings-row .lbl{font-size:13px;color:var(--text);}
+.settings-row .desc{font-size:11px;color:var(--muted);margin-top:2px;}
+.mode-select{background:var(--bg);border:1px solid var(--border2);color:var(--text);border-radius:6px;padding:6px 10px;font-family:var(--mono);font-size:13px;outline:none;}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.content>*{animation:fadeIn 0.25s ease both;}
+@media(max-width:500px){h1{font-size:18px;}.today-cal{font-size:26px;}}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
 </style>
 </head>
 <body>
 <div class="app">
-
   <div class="header">
-    <div class="header-top">
-      <div class="logo-area">
-        <div class="eyebrow">Protocole Calorique</div>
-        <h1>Calorie Tracker</h1>
-      </div>
-    </div>
+    <div class="eyebrow">Protocole Calorique</div>
+    <h1>Calorie Tracker</h1>
     <div class="header-stats" id="headerStats"></div>
   </div>
-
   <div class="nav">
     <button class="tab active" data-tab="journal">📅 Journal</button>
-    <button class="tab" data-tab="pas">👣 Pas</button>
-    <button class="tab" data-tab="prog">💪 Prog</button>
     <button class="tab" data-tab="graphe">📈 Graphe</button>
     <button class="tab" data-tab="regles">📖 Règles</button>
     <button class="tab" data-tab="reglages">⚙️ Réglages</button>
   </div>
-
   <div class="content" id="content"></div>
 </div>
 
 <script>
-// ══════════════════════════════════════════════
-// STATE
-// ══════════════════════════════════════════════
-const DEFAULT_SETTINGS = { startCal: 2200, maxCal: 2600, minCal: 1800, step: 200 };
-
-let state = {
-  entries: [],   // { date: "YYYY-MM-DD", weight: number }
-  settings: { ...DEFAULT_SETTINGS },
+// ══ STATE ══════════════════════════════════════
+const DEFAULT_SETTINGS = {
+  startCal: 2200,
+  minCal: 1200,
+  maxCal: 9999,
+  step: 200,
+  mode: 'deficit'
 };
+
+let state = { entries: [], settings: { ...DEFAULT_SETTINGS } };
 
 function loadState() {
   try {
-    const s = localStorage.getItem("caltracker_v2");
+    const s = localStorage.getItem('caltracker_v3');
     if (s) state = { ...state, ...JSON.parse(s) };
   } catch(e) {}
 }
-
 function saveState() {
-  localStorage.setItem("caltracker_v2", JSON.stringify(state));
+  localStorage.setItem('caltracker_v3', JSON.stringify(state));
 }
 
-// ══════════════════════════════════════════════
-// PROTOCOL LOGIC
-// ══════════════════════════════════════════════
+// ══ PROTOCOL LOGIC ════════════════════════════
 function computeProtocol(entries) {
   if (!entries.length) return [];
-
   const sorted = [...entries].sort((a, b) => a.date.localeCompare(b.date));
-  const { startCal, maxCal, minCal, step } = state.settings;
-
+  const { startCal, minCal, step, mode } = state.settings;
   const result = [];
 
   for (let i = 0; i < sorted.length; i++) {
@@ -715,1019 +189,484 @@ function computeProtocol(entries) {
     const w = entry.weight;
 
     if (i === 0) {
-      result.push({ ...entry, cal: startCal, mode: "BAISSE", consec: 1 });
+      result.push({ ...entry, cal: startCal });
       continue;
     }
 
     const prev = result[i - 1];
     if (!prev) continue;
 
-    // Consecutive days at same calorie level (looking back from yesterday)
+    // Jours consécutifs au même total
     let consec = 0;
     for (let k = i - 1; k >= 0; k--) {
       if (result[k].cal === prev.cal) consec++;
       else break;
     }
 
-    // Comparaison J4 vs J2 (et J5 vs J2, J6 vs J2...)
-    // J1 = premier jour au nouveau total (son poids reflète l'ancien total)
-    // J2 = premier poids "vrai" au nouveau total (reflète J1 de ce total)
-    // On compare toujours le poids actuel à J2 (index = firstDayIdx + 1)
-    const firstDayIdx = i - consec;       // index de J1
-    const refDayIdx = firstDayIdx + 1;    // index de J2 = référence
-    const weightRef = sorted[refDayIdx] ? sorted[refDayIdx].weight : sorted[firstDayIdx].weight;
+    // Référence = poids J2 à ce total (J1 reflète l'ancien régime)
+    const firstIdx = i - consec;
+    const refIdx = firstIdx + 1;
+    const weightRef = sorted[refIdx] ? sorted[refIdx].weight : sorted[firstIdx].weight;
 
-    // Tendance : comparaison poids actuel (J4+) vs poids J2 (référence)
-    // < 0 → baisse, = 0 → stagne, > 0 → hausse
-    const trendFromStart = w - weightRef;
-
-    // On a assez de données pour décider quand on est au 3ème jour ou plus
-    // (consec >= 2 signifie : j1, j2 déjà passés, aujourd'hui = j3)
-    // hasData = consec >= 3 garantit 3 jours minimum au meme total
-    // (decision prise a partir du J4, J1/J2/J3 gardent toujours le meme total)
-    const hasData = consec >= 3;
-
-    let nextCal, nextMode;
-
-    if (prev.mode === "REMONTEE") {
-      if (hasData && trendFromStart > 0) {
-        // Poids supérieur au j1 de ce total → retour en BAISSE
-        nextMode = "BAISSE";
-        nextCal = Math.max(minCal, Math.min(maxCal, prev.cal - step));
-      } else {
-        nextMode = "REMONTEE";
-        if (!hasData) {
-          // Pas encore assez de jours → on maintient
-          nextCal = prev.cal;
-        } else if (trendFromStart < 0) {
-          // Poids inférieur au j1 → baisse confirmée → maintien (max 5j puis +200)
-          nextCal = consec >= 5 ? Math.min(maxCal, prev.cal + step) : prev.cal;
-        } else {
-          // Poids égal au j1 → stagne → +200 kcal
-          nextCal = Math.min(maxCal, prev.cal + step);
-        }
-      }
-    } else {
-      // MODE BAISSE
-      // Activation remontée si à minCal :
-      // - après 5j au même total
-      // - OU après 3j+ si poids stagne ou monte (>= j1)
-      const atMin = prev.cal === minCal;
-      const forceRemontee = atMin && (consec >= 5 || (hasData && trendFromStart >= 0));
-
-      if (forceRemontee) {
-        nextMode = "REMONTEE";
-        nextCal = Math.min(maxCal, minCal + step);
-      } else {
-        nextMode = "BAISSE";
-        if (!hasData) {
-          // Pas encore 3j → on maintient
-          nextCal = prev.cal;
-        } else if (consec >= 5) {
-          // 5j au même total → on force la baisse
-          nextCal = Math.max(minCal, prev.cal - step);
-        } else if (trendFromStart < 0) {
-          // Poids inférieur au j1 → baisse → on maintient
-          nextCal = prev.cal;
-        } else {
-          // Poids égal ou supérieur au j1 → stagne/monte → -200 kcal
-          nextCal = Math.max(minCal, prev.cal - step);
-        }
-      }
+    // Minimum 3 jours garantis → décision à partir de J4 (consec >= 3)
+    if (consec < 3) {
+      result.push({ ...entry, cal: prev.cal });
+      continue;
     }
 
-    result.push({ ...entry, cal: nextCal, mode: nextMode, consec: consec + 1 });
-  }
+    // Tendance : poids actuel vs J2
+    const isDown = w < weightRef;  // true = poids en baisse
 
+    let nextCal;
+    if (mode === 'deficit') {
+      // Baisse → maintien / Stagne ou hausse → -200
+      nextCal = isDown ? prev.cal : Math.max(minCal, prev.cal - step);
+    } else {
+      // reverse ou masse : Baisse → +200 / Stagne ou hausse → maintien
+      nextCal = isDown ? prev.cal + step : prev.cal;
+    }
+
+    result.push({ ...entry, cal: nextCal });
+  }
   return result;
 }
 
-// ══════════════════════════════════════════════
-// HELPERS
-// ══════════════════════════════════════════════
-function today() {
-  return new Date().toISOString().slice(0, 10);
-}
+// ══ HELPERS ════════════════════════════════════
+function today() { return new Date().toISOString().slice(0,10); }
 
 function fmtDate(d) {
-  const [y, m, day] = d.split("-");
-  return `${day}/${m}/${y}`;
+  const [y,m,day] = d.split('-');
+  return day+'/'+m+'/'+y;
 }
 
-function calColor(cal, mode) {
-  if (mode === "REMONTEE") return "cal-rise";
-  const { maxCal, minCal } = state.settings;
-  const mid = (maxCal + minCal) / 2;
-  if (cal >= mid + 200) return "cal-high";
-  if (cal >= mid) return "cal-mid";
-  if (cal > minCal) return "cal-low";
-  return "cal-floor";
+function modeInfo() {
+  const m = state.settings.mode;
+  if (m === 'deficit')
+    return { label:'↓ DÉFICIT', pillClass:'deficit', calClass:'c-deficit', bannerClass:'mode-deficit' };
+  if (m === 'reverse')
+    return { label:'↑ REVERSE DIET', pillClass:'reverse', calClass:'c-reverse', bannerClass:'mode-reverse' };
+  return { label:'💪 PRISE DE MASSE', pillClass:'masse', calClass:'c-masse', bannerClass:'mode-masse' };
+}
+
+function calRowClass(cal, mode) {
+  if (mode === 'deficit') {
+    if (cal >= 2200) return 'r-low';
+    if (cal >= 1800) return 'r-mid';
+    return 'r-down';
+  }
+  if (mode === 'reverse') return 'r-up';
+  return 'r-mass';
 }
 
 function weightDelta(sorted, i) {
   if (i === 0) return null;
-  const diff = sorted[i].weight - sorted[i - 1].weight;
-  if (Math.abs(diff) < 0.05) return { val: "→", cls: "delta-same" };
-  if (diff < 0) return { val: `−${Math.abs(diff).toFixed(1)} kg`, cls: "delta-down" };
-  return { val: `+${diff.toFixed(1)} kg`, cls: "delta-up" };
+  const diff = sorted[i].weight - sorted[i-1].weight;
+  if (Math.abs(diff) < 0.05) return { val:'→', cls:'delta-same' };
+  if (diff < 0) return { val:'-'+Math.abs(diff).toFixed(1)+' kg', cls:'delta-down' };
+  return { val:'+'+diff.toFixed(1)+' kg', cls:'delta-up' };
 }
 
-// ══════════════════════════════════════════════
-// RENDER
-// ══════════════════════════════════════════════
-let currentTab = "journal";
+// ══ RENDER ════════════════════════════════════
+let currentTab = 'journal';
 
 function render() {
-  updateHeaderStats();
-  const c = document.getElementById("content");
-  c.innerHTML = "";
-
-  if (currentTab === "journal") renderJournal(c);
-  else if (currentTab === "pas") renderPas(c);
-  else if (currentTab === "prog") renderProg(c);
-  else if (currentTab === "graphe") renderGraphe(c);
-  else if (currentTab === "regles") renderRegles(c);
-  else if (currentTab === "reglages") renderReglages(c);
+  updateHeader();
+  const c = document.getElementById('content');
+  c.innerHTML = '';
+  if (currentTab === 'journal') renderJournal(c);
+  else if (currentTab === 'graphe') renderGraphe(c);
+  else if (currentTab === 'regles') renderRegles(c);
+  else if (currentTab === 'reglages') renderReglages(c);
 }
 
-function updateHeaderStats() {
-  const el = document.getElementById("headerStats");
+function updateHeader() {
+  const el = document.getElementById('headerStats');
   const protocol = computeProtocol(state.entries);
-  if (!protocol.length) { el.innerHTML = ""; return; }
-
+  if (!protocol.length) { el.innerHTML = ''; return; }
   const last = protocol[protocol.length - 1];
-  const mode = last.mode;
-  const modeClass = mode === "REMONTEE" ? "mode-remontee" : "mode-baisse";
-  const modeLabel = mode === "REMONTEE" ? "↑ Remontée" : "↓ Baisse";
-
-  el.innerHTML = `
-    <div class="stat-pill ${modeClass}">${modeLabel}</div>
-    <div class="stat-pill">Aujourd'hui <span class="val">${last.cal} kcal</span></div>
-    <div class="stat-pill">${state.entries.length} jours</div>
-  `;
+  const mi = modeInfo();
+  el.innerHTML =
+    '<div class="stat-pill '+mi.pillClass+'">'+mi.label+'</div>' +
+    '<div class="stat-pill">Aujourd'hui <span class="val">'+last.cal+' kcal</span></div>' +
+    '<div class="stat-pill">'+state.entries.length+' jours</div>';
 }
 
 // ── JOURNAL ──
 function renderJournal(c) {
   const protocol = computeProtocol(state.entries);
-  const sorted = [...state.entries].sort((a, b) => a.date.localeCompare(b.date));
+  const sorted = [...state.entries].sort((a,b) => a.date.localeCompare(b.date));
+  const mi = modeInfo();
 
-  // Today banner
   if (protocol.length > 0) {
     const last = protocol[protocol.length - 1];
-    const modeClass = last.mode === "REMONTEE" ? "mode-r" : "mode-b";
-    const modeLabel = last.mode === "REMONTEE" ? "↑ MODE REMONTÉE" : "↓ MODE BAISSE";
-    c.innerHTML += `
-      <div class="today-banner">
-        <div>
-          <div class="today-label">Objectif du jour</div>
-          <div class="today-cal ${modeClass}">${last.cal} <span style="font-size:14px;font-weight:400;opacity:.5">kcal</span></div>
-          <div class="today-sub">${modeLabel} · Jour ${protocol.length}</div>
-        </div>
-        <div style="text-align:right">
-          <div class="today-label">Dernier poids</div>
-          <div style="font-size:20px;font-family:system-ui, -apple-system, sans-serif;font-weight:700">${last.weight} <span style="font-size:12px;opacity:.5">kg</span></div>
-          <div class="today-sub">${fmtDate(last.date)}</div>
-        </div>
-      </div>`;
+    c.innerHTML +=
+      '<div class="today-banner '+mi.bannerClass+'">' +
+        '<div>' +
+          '<div class="today-label">Objectif du jour</div>' +
+          '<div class="today-cal '+mi.calClass+'">'+last.cal+' <span style="font-size:14px;font-weight:400;opacity:.5">kcal</span></div>' +
+          '<div class="today-sub">'+mi.label+' · Jour '+protocol.length+'</div>' +
+        '</div>' +
+        '<div style="text-align:right">' +
+          '<div class="today-label">Dernier poids</div>' +
+          '<div style="font-size:20px;font-family:var(--display);font-weight:700">'+last.weight.toFixed(1)+' <span style="font-size:12px;opacity:.5">kg</span></div>' +
+          '<div class="today-sub">'+fmtDate(last.date)+'</div>' +
+        '</div>' +
+      '</div>';
   }
 
-  // Add entry form
-  const todayStr = today();
-  c.innerHTML += `
-    <div class="add-entry">
-      <div class="add-entry-title">+ Ajouter une entrée</div>
-      <div class="entry-row">
-        <div class="field field-date">
-          <label>Date</label>
-          <input class="input" type="date" id="inDate" value="${todayStr}"/>
-        </div>
-        <div class="field field-weight">
-          <label>Poids (kg)</label>
-          <input class="input" type="number" id="inWeight" step="0.1" placeholder="85.0"/>
-        </div>
-        <button class="btn" onclick="addEntry()">AJOUTER</button>
-      </div>
-    </div>`;
+  c.innerHTML +=
+    '<div class="add-entry">' +
+      '<div class="add-entry-title">+ Ajouter une entrée</div>' +
+      '<div class="entry-row">' +
+        '<div class="field"><label>Date</label><input class="input" type="date" id="inDate" value="'+today()+'"/></div>' +
+        '<div class="field"><label>Poids (kg)</label><input class="input" type="number" id="inWeight" step="0.1" placeholder="80.0"/></div>' +
+        '<button class="btn" onclick="addEntry()">AJOUTER</button>' +
+      '</div>' +
+    '</div>';
 
   if (!protocol.length) {
-    c.innerHTML += `<div class="empty">
-      <div class="empty-icon">⚖️</div>
-      <p>Entre ton poids du premier jour pour<br>démarrer le protocole.</p>
-    </div>`;
+    c.innerHTML += '<div class="empty"><div class="empty-icon">⚖️</div><p>Entre ton poids du premier jour<br>pour démarrer le protocole.</p></div>';
     return;
   }
 
-  // Table (newest first)
   const rows = [...protocol].reverse();
-  const sortedRev = [...sorted].reverse();
+  let html = '<div class="table-wrap"><table><thead><tr>' +
+    '<th>Jour</th><th>Date</th><th>Poids</th><th>Calories</th><th>Statut</th><th></th>' +
+    '</tr></thead><tbody>';
 
-  let html = `<div class="table-wrap"><table>
-    <thead><tr>
-      <th>Jour</th><th>Date</th><th>Poids</th><th>Calories</th><th>Mode</th><th>Statut</th><th></th>
-    </tr></thead><tbody>`;
-
-  rows.forEach((row, ri) => {
-    const origIdx = sorted.findIndex(e => e.date === row.date);
+  rows.forEach(function(row) {
+    const origIdx = sorted.findIndex(function(e) { return e.date === row.date; });
     const delta = weightDelta(sorted, origIdx);
-    const statusIcon = origIdx === 0 ? "🏁" : (sorted[origIdx].weight < sorted[origIdx - 1]?.weight ? "⬇️" : sorted[origIdx].weight > sorted[origIdx - 1]?.weight ? "⬆️" : "➡️");
-    const cc = calColor(row.cal, row.mode);
-    const modeBadge = row.mode === "REMONTEE"
-      ? `<span class="mode-badge remontee">↑ Remontée</span>`
-      : `<span class="mode-badge baisse">↓ Baisse</span>`;
-    const deltaHtml = delta ? `<div class="weight-delta ${delta.cls}">${delta.val}</div>` : "";
+    const icon = origIdx === 0 ? '🏁' :
+      (sorted[origIdx].weight < sorted[origIdx-1].weight ? '⬇️' :
+       sorted[origIdx].weight > sorted[origIdx-1].weight ? '⬆️' : '➡️');
+    const rc = calRowClass(row.cal, state.settings.mode);
+    const deltaHtml = delta ? '<div class="weight-delta '+delta.cls+'">'+delta.val+'</div>' : '';
 
-    html += `<tr class="${cc}">
-      <td class="td-day">J${origIdx + 1}</td>
-      <td class="td-date">${fmtDate(row.date)}</td>
-      <td class="td-weight">${row.weight.toFixed(1)} kg${deltaHtml}</td>
-      <td class="td-cal">${row.cal}</td>
-      <td>${modeBadge}</td>
-      <td class="status-icon">${statusIcon}</td>
-      <td class="del-col"><button class="del-btn" onclick="deleteEntry('${row.date}')" title="Supprimer">✕</button></td>
-    </tr>`;
+    html +=
+      '<tr class="'+rc+'">' +
+        '<td class="td-day">J'+(origIdx+1)+'</td>' +
+        '<td class="td-date">'+fmtDate(row.date)+'</td>' +
+        '<td class="td-weight">'+row.weight.toFixed(1)+' kg'+deltaHtml+'</td>' +
+        '<td class="td-cal">'+row.cal+'</td>' +
+        '<td>'+icon+'</td>' +
+        '<td class="del-col"><button class="del-btn" onclick="deleteEntry(''+row.date+'')">✕</button></td>' +
+      '</tr>';
   });
 
-  html += `</tbody></table></div>`;
+  html += '</tbody></table></div>';
   c.innerHTML += html;
 }
 
 // ── GRAPHE ──
 function renderGraphe(c) {
   const protocol = computeProtocol(state.entries);
-
   if (protocol.length < 2) {
-    c.innerHTML = `<div class="empty"><div class="empty-icon">📈</div><p>Entre au moins 2 jours de données<br>pour voir les graphes.</p></div>`;
+    c.innerHTML = '<div class="empty"><div class="empty-icon">📈</div><p>Entre au moins 2 jours<br>pour voir les graphes.</p></div>';
     return;
   }
 
-  c.innerHTML = `
-    <div class="chart-wrap">
-      <div class="chart-title">Calories cibles</div>
-      <canvas id="chartCal" height="180"></canvas>
-    </div>
-    <div class="chart-wrap">
-      <div class="chart-title">Évolution du poids</div>
-      <canvas id="chartWeight" height="180"></canvas>
-    </div>`;
+  const m = state.settings.mode;
+  const lineColor = m === 'deficit' ? '#ff6b6b' : m === 'reverse' ? '#4dfa8a' : '#ff9f43';
+  const weightColor = '#ffd166';
 
-  const labels = protocol.map((r, i) => `J${i + 1}`);
-  const cals = protocol.map(r => r.cal);
-  const weights = protocol.map(r => r.weight);
-  const colors = protocol.map(r => r.mode === "REMONTEE" ? "#4dfa8a" : "#7b7bff");
+  c.innerHTML =
+    '<div class="chart-wrap"><div class="chart-title">Calories cibles</div><canvas id="chartCal" height="180"></canvas></div>' +
+    '<div class="chart-wrap"><div class="chart-title">Évolution du poids</div><canvas id="chartWeight" height="180"></canvas></div>';
 
-  drawChart("chartCal", labels, cals, colors, state.settings.minCal - 100, state.settings.maxCal + 100);
-  drawChart("chartWeight", labels, weights, protocol.map(() => "#ffd166"), null, null, true);
+  const labels = protocol.map(function(r,i){ return 'J'+(i+1); });
+  const cals = protocol.map(function(r){ return r.cal; });
+  const weights = protocol.map(function(r){ return r.weight; });
+
+  drawChart('chartCal', labels, cals, lineColor);
+  drawChart('chartWeight', labels, weights, weightColor, true);
 }
 
-function drawChart(id, labels, data, colors, yMin, yMax, isWeight) {
+function drawChart(id, labels, data, color, isWeight) {
   const canvas = document.getElementById(id);
   if (!canvas) return;
-  const ctx = canvas.getContext("2d");
+  const ctx = canvas.getContext('2d');
   const dpr = window.devicePixelRatio || 1;
-  const W = canvas.offsetWidth;
-  const H = canvas.offsetHeight || 180;
-  canvas.width = W * dpr;
-  canvas.height = H * dpr;
+  const W = canvas.offsetWidth, H = canvas.offsetHeight || 180;
+  canvas.width = W * dpr; canvas.height = H * dpr;
   ctx.scale(dpr, dpr);
 
-  const pad = { top: 14, right: 14, bottom: 28, left: 44 };
+  const pad = { top:14, right:14, bottom:28, left:46 };
   const pw = W - pad.left - pad.right;
   const ph = H - pad.top - pad.bottom;
-
-  const minV = yMin ?? Math.min(...data) - (isWeight ? 0.5 : 50);
-  const maxV = yMax ?? Math.max(...data) + (isWeight ? 0.5 : 50);
+  const minV = Math.min(...data) - (isWeight ? 0.5 : 100);
+  const maxV = Math.max(...data) + (isWeight ? 0.5 : 100);
   const range = maxV - minV || 1;
 
-  function xOf(i) { return pad.left + (i / (data.length - 1)) * pw; }
+  function xOf(i) { return pad.left + (i / (data.length-1)) * pw; }
   function yOf(v) { return pad.top + ph - ((v - minV) / range) * ph; }
 
-  // Grid
-  ctx.strokeStyle = "#1e1e3a";
-  ctx.lineWidth = 1;
-  const steps = 4;
-  for (let s = 0; s <= steps; s++) {
-    const v = minV + (range / steps) * s;
+  ctx.strokeStyle = '#1e1e3a'; ctx.lineWidth = 1;
+  for (let s = 0; s <= 4; s++) {
+    const v = minV + (range/4)*s;
     const y = yOf(v);
-    ctx.beginPath();
-    ctx.moveTo(pad.left, y);
-    ctx.lineTo(pad.left + pw, y);
-    ctx.stroke();
-    ctx.fillStyle = "#3a3a5a";
-    ctx.font = "9px ui-monospace, monospace";
-    ctx.textAlign = "right";
-    ctx.fillText(isWeight ? v.toFixed(1) : Math.round(v), pad.left - 5, y + 3);
+    ctx.beginPath(); ctx.moveTo(pad.left,y); ctx.lineTo(pad.left+pw,y); ctx.stroke();
+    ctx.fillStyle = '#3a3a5a'; ctx.font = '9px ui-monospace,monospace'; ctx.textAlign = 'right';
+    ctx.fillText(isWeight ? v.toFixed(1) : Math.round(v), pad.left-5, y+3);
   }
 
-  // Gradient fill
   if (data.length > 1) {
-    const grad = ctx.createLinearGradient(0, pad.top, 0, pad.top + ph);
-    grad.addColorStop(0, colors[0] + "33");
-    grad.addColorStop(1, colors[0] + "00");
-    ctx.beginPath();
-    ctx.moveTo(xOf(0), yOf(data[0]));
-    for (let i = 1; i < data.length; i++) ctx.lineTo(xOf(i), yOf(data[i]));
-    ctx.lineTo(xOf(data.length - 1), pad.top + ph);
-    ctx.lineTo(xOf(0), pad.top + ph);
-    ctx.closePath();
-    ctx.fillStyle = grad;
-    ctx.fill();
+    const grad = ctx.createLinearGradient(0,pad.top,0,pad.top+ph);
+    grad.addColorStop(0, color+'33'); grad.addColorStop(1, color+'00');
+    ctx.beginPath(); ctx.moveTo(xOf(0),yOf(data[0]));
+    for (let i = 1; i < data.length; i++) ctx.lineTo(xOf(i),yOf(data[i]));
+    ctx.lineTo(xOf(data.length-1),pad.top+ph); ctx.lineTo(xOf(0),pad.top+ph);
+    ctx.closePath(); ctx.fillStyle = grad; ctx.fill();
   }
 
-  // Line
-  ctx.beginPath();
-  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.lineWidth = 2; ctx.strokeStyle = color;
   for (let i = 0; i < data.length; i++) {
-    ctx.strokeStyle = colors[i] || colors[0];
-    if (i === 0) ctx.moveTo(xOf(i), yOf(data[i]));
-    else {
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(xOf(i - 1), yOf(data[i - 1]));
-      ctx.lineTo(xOf(i), yOf(data[i]));
-    }
+    if (i === 0) ctx.moveTo(xOf(0),yOf(data[0]));
+    else ctx.lineTo(xOf(i),yOf(data[i]));
   }
   ctx.stroke();
 
-  // Dots
   for (let i = 0; i < data.length; i++) {
-    ctx.beginPath();
-    ctx.arc(xOf(i), yOf(data[i]), 3, 0, Math.PI * 2);
-    ctx.fillStyle = colors[i] || colors[0];
-    ctx.fill();
+    ctx.beginPath(); ctx.arc(xOf(i),yOf(data[i]),3,0,Math.PI*2);
+    ctx.fillStyle = color; ctx.fill();
   }
 
-  // X labels (sparse)
-  ctx.fillStyle = "#3a3a5a";
-  ctx.font = "9px ui-monospace, monospace";
-  ctx.textAlign = "center";
-  const step = Math.max(1, Math.floor(data.length / 7));
+  ctx.fillStyle = '#3a3a5a'; ctx.font = '9px ui-monospace,monospace'; ctx.textAlign = 'center';
+  const step = Math.max(1, Math.floor(data.length/7));
   for (let i = 0; i < labels.length; i += step) {
-    ctx.fillText(labels[i], xOf(i), pad.top + ph + 16);
+    ctx.fillText(labels[i], xOf(i), pad.top+ph+16);
   }
 }
 
 // ── RÈGLES ──
 function renderRegles(c) {
-  const { minCal, maxCal, step } = state.settings;
-  c.innerHTML = `
-    <div class="rules-phase down">
-      <div class="rules-header">↓ Mode Baisse</div>
-      <div class="rules-list">
-        ${[
-          "Jours 1–3 : calories fixes (période d'observation)",
-          `Si poids ↓ sur 3 jours → maintien des calories actuelles`,
-          `Si poids stagne ou ↑ sur 3 jours → −${step} kcal`,
-          `Après 5 jours au même total → −${step} kcal obligatoires`,
-          `Plancher absolu : ${minCal} kcal`,
-        ].map((r, i) => `<div class="rule-item"><span class="rule-num">${i+1}.</span>${r}</div>`).join("")}
-      </div>
-    </div>
-    <div class="rules-phase up">
-      <div class="rules-header">↑ Mode Remontée (après 5 jours à ${minCal} kcal)</div>
-      <div class="rules-list">
-        ${[
-          `Activation après 5 jours consécutifs à ${minCal} kcal, ou après 3 jours si poids stagne ou ↑`,
-          `Passage à ${minCal + step} kcal (+${step})`,
-          `Si poids ↓ sur 3 jours → maintien (max 5 jours, puis +${step})`
-,          `Si poids stagne sur 3 jours → +${step} kcal`,
-          `Si poids ↑ sur 3 jours → retour en mode BAISSE`,
-          `Plafond absolu : ${maxCal} kcal`,
-        ].map((r, i) => `<div class="rule-item"><span class="rule-num">${i+1}.</span>${r}</div>`).join("")}
-      </div>
-    </div>
-    <div class="info-box">
-      <strong>Cycle typique :</strong> Baisse de ${maxCal}→${minCal} kcal · 5 jours à ${minCal} · Remontée vers ${minCal+step}–${minCal+step*2} · Si poids remonte → retour en baisse.
-    </div>`;
+  let html = '';
+
+  // ── Tableau récapitulatif ──
+  html +=
+    '<div class="chart-title" style="margin-bottom:12px">TABLEAU RÉCAPITULATIF</div>' +
+    '<div class="rules-table-wrap">' +
+    '<table class="rules-table">' +
+    '<thead><tr>' +
+      '<th>Phase</th><th>Objectif</th><th>Poids ↓</th><th>Poids =</th><th>Critère d'arrêt</th>' +
+    '</tr></thead><tbody>' +
+    '<tr>' +
+      '<td style="color:var(--down)">↓ DÉFICIT</td>' +
+      '<td>Perdre du gras</td>' +
+      '<td style="color:var(--muted)">Maintien</td>' +
+      '<td style="color:var(--down)">−200 kcal</td>' +
+      '<td>Fatigue, obsession alimentaire, baisse de perfs</td>' +
+    '</tr>' +
+    '<tr>' +
+      '<td style="color:var(--up)">↑ REVERSE DIET</td>' +
+      '<td>Atteindre la maintenance optimisée</td>' +
+      '<td style="color:var(--up)">+200 kcal</td>' +
+      '<td style="color:var(--muted)">Maintien</td>' +
+      '<td>Maintenance optimisée atteinte (poids stable)</td>' +
+    '</tr>' +
+    '<tr>' +
+      '<td style="color:var(--mass)">💪 PRISE DE MASSE</td>' +
+      '<td>Maximiser la récupération</td>' +
+      '<td style="color:var(--mass)">+200 kcal</td>' +
+      '<td style="color:var(--muted)">Maintien</td>' +
+      '<td>Trop de gras accumulé</td>' +
+    '</tr>' +
+    '</tbody></table></div>' +
+    '<div class="info-note" style="margin-bottom:20px"><strong>Logique commune :</strong> Minimum 3 jours à chaque total calorique. À partir du J4, on compare le poids du jour au poids de J2 (référence). Pas de durée maximale à un même palier.</div>';
+
+  // ── Bloc DÉFICIT ──
+  html +=
+    '<div class="phase-block">' +
+    '<div class="phase-header" style="color:var(--down);border-left:3px solid var(--down)">↓ DÉFICIT — PROTOCOLE DE DÉFICIT PROGRESSIF</div>' +
+    '<div class="phase-body">' +
+      '<div class="phase-section">' +
+        '<div class="phase-section-title">Étape 1 — Phase descendante</div>' +
+        '<div class="phase-item"><span class="phase-dot">1.</span>Point de départ : votre maintenance optimisée moins 200 kcal</div>' +
+        '<div class="phase-item"><span class="phase-dot">2.</span>Règle de base : tant que le poids diminue (J4+ vs J2), ne modifiez rien</div>' +
+        '<div class="phase-item"><span class="phase-dot">3.</span>Ajustement : dès stagnation ou hausse sur 3 jours → −200 kcal</div>' +
+        '<div class="phase-item"><span class="phase-dot">4.</span>Répétition : continuez ce processus de manière progressive</div>' +
+      '</div>' +
+      '<div class="phase-section">' +
+        '<div class="phase-section-title">Étape 2 — Signaux d'arrêt</div>' +
+        '<div class="phase-item"><span class="phase-dot">•</span>Obsession alimentaire constante</div>' +
+        '<div class="phase-item"><span class="phase-dot">•</span>Baisse notable des performances sportives</div>' +
+        '<div class="phase-item"><span class="phase-dot">•</span>Fatigue prématurée et accrue</div>' +
+        '<div class="phase-item"><span class="phase-dot">•</span>Stagnation pondérale malgré le déficit</div>' +
+      '</div>' +
+      '<div class="phase-section">' +
+        '<div class="phase-section-title">Étape 3 — Phase de remontée (si nécessaire)</div>' +
+        '<div class="phase-item"><span class="phase-dot">•</span>Si signaux d'arrêt → passer en mode Reverse Diet</div>' +
+        '<div class="phase-item"><span class="phase-dot">•</span>Une fois la remontée terminée, reprendre la phase descendante</div>' +
+        '<div class="phase-item"><span class="phase-dot">•</span>Ce cycle peut être répété selon vos besoins</div>' +
+      '</div>' +
+    '</div></div>';
+
+  // ── Bloc REVERSE DIET ──
+  html +=
+    '<div class="phase-block">' +
+    '<div class="phase-header" style="color:var(--up);border-left:3px solid var(--up)">↑ REVERSE DIET — PROTOCOLE SPÉCIFIQUE</div>' +
+    '<div class="phase-body">' +
+      '<div class="phase-section">' +
+        '<div class="phase-section-title">Indicateurs positifs (ne rien faire)</div>' +
+        '<div class="phase-item"><span class="phase-dot">•</span>Poids stable ou en légère hausse</div>' +
+        '<div class="phase-item"><span class="phase-dot">•</span>Absence de signaux de fatigue du déficit calorique</div>' +
+      '</div>' +
+      '<div class="phase-section">' +
+        '<div class="phase-section-title">Signaux d'alerte → +200 kcal</div>' +
+        '<div class="phase-item"><span class="phase-dot">•</span>Tendance pondérale baissière (J4+ &lt; J2)</div>' +
+        '<div class="phase-item"><span class="phase-dot">•</span>Apparition de signaux de déficit calorique</div>' +
+      '</div>' +
+      '<div class="phase-section">' +
+        '<div class="phase-section-title">Finalisation</div>' +
+        '<div class="phase-item"><span class="phase-dot">•</span>Lorsque le poids n'a plus de tendance baissière → maintenance optimisée atteinte</div>' +
+        '<div class="phase-item"><span class="phase-dot">•</span>Possibilité d'explorer 1 ou 2 paliers supplémentaires</div>' +
+      '</div>' +
+      '<div class="info-note"><strong>Durée :</strong> 4–8 mois selon vos préférences. Critère d'arrêt : composition corporelle approche de votre limite de tolérance en masse grasse.</div>' +
+      '<div class="info-note" style="margin-top:8px"><strong>Remarque :</strong> Les fluctuations hydriques post-augmentation peuvent temporairement masquer la tendance réelle. Attendez 72h (3 jours) après chaque augmentation avant réévaluation.</div>' +
+    '</div></div>';
+
+  // ── Bloc PRISE DE MASSE ──
+  html +=
+    '<div class="phase-block">' +
+    '<div class="phase-header" style="color:var(--mass);border-left:3px solid var(--mass)">💪 PRISE DE MASSE</div>' +
+    '<div class="phase-body">' +
+      '<div class="phase-section">' +
+        '<div class="phase-section-title">Objectif</div>' +
+        '<div class="phase-item"><span class="phase-dot">•</span>Maximiser la récupération et la prise de masse musculaire</div>' +
+        '<div class="phase-item"><span class="phase-dot">•</span>Maintenir un surplus calorique contrôlé</div>' +
+      '</div>' +
+      '<div class="phase-section">' +
+        '<div class="phase-section-title">Règles</div>' +
+        '<div class="phase-item"><span class="phase-dot">•</span>Poids en baisse (J4+ &lt; J2) → +200 kcal (signal de déficit)</div>' +
+        '<div class="phase-item"><span class="phase-dot">•</span>Poids stagne ou hausse → maintien du total actuel</div>' +
+        '<div class="phase-item"><span class="phase-dot">•</span>Fatigue de déficit ressentie → +200 kcal immédiat</div>' +
+      '</div>' +
+      '<div class="phase-section">' +
+        '<div class="phase-section-title">Critère d'arrêt</div>' +
+        '<div class="phase-item"><span class="phase-dot">•</span>Trop de gras accumulé (zone de stockage préférentielle se remplit)</div>' +
+        '<div class="phase-item"><span class="phase-dot">•</span>Passer en mode Déficit quand la limite de tolérance est atteinte</div>' +
+      '</div>' +
+    '</div></div>';
+
+  c.innerHTML = html;
 }
 
 // ── RÉGLAGES ──
 function renderReglages(c) {
   const s = state.settings;
-  c.innerHTML = `
-    <div class="settings-section">
-      <div class="settings-title">Protocole</div>
-      <div class="settings-card">
-        <div class="settings-row">
-          <div><div>Calories de départ</div><div class="desc">Valeur au jour 1</div></div>
-          <input class="input" type="number" id="setStart" value="${s.startCal}" step="100" min="1800" max="2600" style="width:100px"/>
-        </div>
-        <div class="settings-row">
-          <div><div>Maximum</div><div class="desc">Plafond absolu</div></div>
-          <input class="input" type="number" id="setMax" value="${s.maxCal}" step="100" min="2000" max="4000" style="width:100px"/>
-        </div>
-        <div class="settings-row">
-          <div><div>Minimum</div><div class="desc">Plancher absolu</div></div>
-          <input class="input" type="number" id="setMin" value="${s.minCal}" step="100" min="1000" max="2400" style="width:100px"/>
-        </div>
-        <div class="settings-row">
-          <div><div>Palier</div><div class="desc">Variation par ajustement</div></div>
-          <input class="input" type="number" id="setStep" value="${s.step}" step="50" min="100" max="500" style="width:100px"/>
-        </div>
-      </div>
-    </div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px">
-      <button class="btn" onclick="saveSettings()">ENREGISTRER</button>
-    </div>
-    <div class="settings-section">
-      <div class="settings-title">Données</div>
-      <div class="settings-card">
-        <div class="settings-row">
-          <div><div>Exporter</div><div class="desc">Télécharger en CSV</div></div>
-          <button class="btn btn-sm" onclick="exportCSV()">EXPORT CSV</button>
-        </div>
-        <div class="settings-row">
-          <div><div>Tout effacer</div><div class="desc">Supprimer toutes les entrées</div></div>
-          <button class="btn btn-sm btn-danger" onclick="clearAll()">EFFACER</button>
-        </div>
-      </div>
-    </div>`;
+  const modeOptions =
+    '<option value="deficit"'+(s.mode==='deficit'?' selected':'')+'>↓ Déficit</option>' +
+    '<option value="reverse"'+(s.mode==='reverse'?' selected':'')+'>↑ Reverse Diet</option>' +
+    '<option value="masse"'+(s.mode==='masse'?' selected':'')+'>💪 Prise de Masse</option>';
+
+  c.innerHTML =
+    '<div class="settings-section">' +
+      '<div class="settings-title">Mode actif</div>' +
+      '<div class="settings-card">' +
+        '<div class="settings-row">' +
+          '<div><div class="lbl">Protocole</div><div class="desc">Déficit · Reverse Diet · Masse</div></div>' +
+          '<select class="mode-select" id="setMode">' + modeOptions + '</select>' +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="settings-section">' +
+      '<div class="settings-title">Paramètres</div>' +
+      '<div class="settings-card">' +
+        '<div class="settings-row">' +
+          '<div><div class="lbl">Calories de départ</div><div class="desc">Valeur au jour 1</div></div>' +
+          '<input class="input" type="number" id="setStart" value="'+s.startCal+'" step="100" min="800" style="width:100px"/>' +
+        '</div>' +
+        '<div class="settings-row">' +
+          '<div><div class="lbl">Plancher (déficit)</div><div class="desc">Minimum en mode déficit</div></div>' +
+          '<input class="input" type="number" id="setMin" value="'+s.minCal+'" step="100" min="800" max="2400" style="width:100px"/>' +
+        '</div>' +
+        '<div class="settings-row">' +
+          '<div><div class="lbl">Palier</div><div class="desc">Variation par ajustement</div></div>' +
+          '<input class="input" type="number" id="setStep" value="'+s.step+'" step="50" min="50" max="500" style="width:100px"/>' +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+    '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px">' +
+      '<button class="btn" onclick="saveSettings()">ENREGISTRER</button>' +
+    '</div>' +
+    '<div class="settings-section">' +
+      '<div class="settings-title">Données</div>' +
+      '<div class="settings-card">' +
+        '<div class="settings-row">' +
+          '<div><div class="lbl">Exporter</div><div class="desc">Télécharger en CSV</div></div>' +
+          '<button class="btn btn-sm" onclick="exportCSV()">EXPORT CSV</button>' +
+        '</div>' +
+        '<div class="settings-row">' +
+          '<div><div class="lbl">Tout effacer</div><div class="desc">Supprimer toutes les entrées</div></div>' +
+          '<button class="btn btn-sm btn-danger" onclick="clearAll()">EFFACER</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
 }
 
-// ══════════════════════════════════════════════
-// ACTIONS
-// ══════════════════════════════════════════════
+// ══ ACTIONS ════════════════════════════════════
 function addEntry() {
-  const date = document.getElementById("inDate").value;
-  const weight = parseFloat(document.getElementById("inWeight").value);
+  const date = document.getElementById('inDate').value;
+  const weight = parseFloat(document.getElementById('inWeight').value);
   if (!date || isNaN(weight)) return;
-
-  const existing = state.entries.findIndex(e => e.date === date);
-  if (existing >= 0) {
-    state.entries[existing].weight = weight;
-  } else {
-    state.entries.push({ date, weight });
-  }
-
-  saveState();
-  render();
+  const idx = state.entries.findIndex(function(e){ return e.date === date; });
+  if (idx >= 0) state.entries[idx].weight = weight;
+  else state.entries.push({ date:date, weight:weight });
+  saveState(); render();
 }
 
 function deleteEntry(date) {
-  if (!confirm("Supprimer cette entrée ?")) return;
-  state.entries = state.entries.filter(e => e.date !== date);
-  saveState();
-  render();
+  if (!confirm('Supprimer cette entrée ?')) return;
+  state.entries = state.entries.filter(function(e){ return e.date !== date; });
+  saveState(); render();
 }
 
 function saveSettings() {
   state.settings = {
-    startCal: parseInt(document.getElementById("setStart").value) || 2200,
-    maxCal: parseInt(document.getElementById("setMax").value) || 2600,
-    minCal: parseInt(document.getElementById("setMin").value) || 1800,
-    step: parseInt(document.getElementById("setStep").value) || 200,
+    startCal: parseInt(document.getElementById('setStart').value) || 2200,
+    minCal:   parseInt(document.getElementById('setMin').value)   || 1200,
+    maxCal:   9999,
+    step:     parseInt(document.getElementById('setStep').value)  || 200,
+    mode:     document.getElementById('setMode').value || 'deficit'
   };
-  saveState();
-  render();
-  alert("Réglages enregistrés ✓");
+  saveState(); render();
+  alert('Réglages enregistrés ✓');
 }
 
 function clearAll() {
-  if (!confirm("Effacer TOUTES les entrées ? Cette action est irréversible.")) return;
-  state.entries = [];
-  saveState();
-  render();
+  if (!confirm('Effacer TOUTES les entrées ?')) return;
+  state.entries = []; saveState(); render();
 }
 
 function exportCSV() {
   const protocol = computeProtocol(state.entries);
-  if (!protocol.length) return alert("Aucune donnée à exporter.");
-  const header = "Jour,Date,Poids (kg),Calories,Mode\n";
-  const rows = protocol.map((r, i) =>
-    `${i + 1},${r.date},${r.weight},${r.cal},${r.mode}`
-  ).join("\n");
-  const blob = new Blob([header + rows], { type: "text/csv;charset=utf-8;" });
-  const a = document.createElement("a");
+  if (!protocol.length) return alert('Aucune donnée.');
+  const header = 'Jour,Date,Poids (kg),Calories\n';
+  const rows = protocol.map(function(r,i){ return (i+1)+','+r.date+','+r.weight+','+r.cal; }).join('\n');
+  const blob = new Blob([header+rows], { type:'text/csv;charset=utf-8;' });
+  const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = "calorie-tracker.csv";
+  a.download = 'calorie-tracker.csv';
   a.click();
 }
 
-// ══════════════════════════════════════════════
-// TABS
-// ══════════════════════════════════════════════
-document.querySelectorAll(".tab").forEach(btn => {
-  btn.addEventListener("click", () => {
-    document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-    btn.classList.add("active");
+// ══ TABS ════════════════════════════════════════
+document.querySelectorAll('.tab').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+    btn.classList.add('active');
     currentTab = btn.dataset.tab;
     render();
   });
 });
 
-// ══════════════════════════════════════════════
-// PAS
-// ══════════════════════════════════════════════
-function renderPas(c) {
-  const pas = state.pas || [];
-  const today = new Date().toISOString().slice(0, 10);
+window.addEventListener('resize', function() {
+  if (currentTab === 'graphe') renderGraphe(document.getElementById('content'));
+});
 
-  // Calcul objectif demain
-  let objectifDemain = 10000;
-  if (pas.length > 0) {
-    const total = pas.reduce((s, e) => s + e.steps, 0);
-    const jours = pas.length + 1;
-    objectifDemain = Math.max(0, Math.round(10000 * jours - total));
-  }
-
-  c.innerHTML = `
-    <div class="add-entry">
-      <div class="add-entry-title">👣 Mes pas du jour</div>
-      <div class="pas-input-row">
-        <div class="field" style="width:80%">
-          <label>Date</label>
-          <input class="input" type="date" id="pasDate" value="${today}"/>
-        </div>
-        <div class="field" style="width:80%">
-          <label>Nombre de pas</label>
-          <input class="input" type="number" id="pasSteps" placeholder="8 500" min="0" max="99999"/>
-        </div>
-        <button class="btn" style="width:80%;text-align:center" onclick="addPas()">AJOUTER</button>
-      </div>
-    </div>
-
-    <div class="today-banner">
-      <div>
-        <div class="today-label">Objectif demain</div>
-        <div class="today-cal" style="color:var(--gold)">${objectifDemain.toLocaleString('fr-FR')} <span style="font-size:14px;font-weight:400;opacity:.5">pas</span></div>
-        <div class="today-sub">pour maintenir une moyenne de 10 000 pas/jour</div>
-      </div>
-      <div style="text-align:right">
-        <div class="today-label">Jours enregistrés</div>
-        <div style="font-size:20px;font-family:var(--display);font-weight:700">${pas.length}</div>
-      </div>
-    </div>
-    ${pas.length >= 2 ? `<div class="chart-wrap">
-      <div class="chart-title">Pas par jour</div>
-      <canvas id="chartPas" height="180"></canvas>
-    </div>` : ''}`;
-
-  if (pas.length >= 2) setTimeout(() => drawPasChart(pas), 50);
-}
-
-function drawPasChart(pas) {
-  const canvas = document.getElementById('chartPas');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  const dpr = window.devicePixelRatio || 1;
-  const W = canvas.offsetWidth;
-  const H = 180;
-  canvas.width = W * dpr;
-  canvas.height = H * dpr;
-  ctx.scale(dpr, dpr);
-
-  const data = pas.map(e => e.steps);
-  const labels = pas.map(e => fmtDate(e.date).slice(0,5));
-  const pad = { top: 14, right: 14, bottom: 28, left: 52 };
-  const pw = W - pad.left - pad.right;
-  const ph = H - pad.top - pad.bottom;
-  const minV = 0;
-  const maxV = Math.max(...data, 12000);
-
-  function xOf(i) { return pad.left + (i / (data.length - 1)) * pw; }
-  function yOf(v) { return pad.top + ph - ((v - minV) / (maxV - minV)) * ph; }
-
-  // Ligne objectif 10000
-  ctx.strokeStyle = '#ffd16644';
-  ctx.lineWidth = 1;
-  ctx.setLineDash([4, 4]);
-  const y10k = yOf(10000);
-  ctx.beginPath();
-  ctx.moveTo(pad.left, y10k);
-  ctx.lineTo(pad.left + pw, y10k);
-  ctx.stroke();
-  ctx.setLineDash([]);
-  ctx.fillStyle = '#ffd166';
-  ctx.font = '9px ui-monospace, monospace';
-  ctx.textAlign = 'right';
-  ctx.fillText('10 000', pad.left - 4, y10k + 3);
-
-  // Grid
-  ctx.strokeStyle = '#1e1e3a';
-  ctx.lineWidth = 1;
-  [0, 5000, 10000].forEach(v => {
-    if (v === 10000) return;
-    const y = yOf(v);
-    ctx.beginPath();
-    ctx.moveTo(pad.left, y);
-    ctx.lineTo(pad.left + pw, y);
-    ctx.stroke();
-    ctx.fillStyle = '#3a3a5a';
-    ctx.font = '9px ui-monospace, monospace';
-    ctx.textAlign = 'right';
-    ctx.fillText(v === 0 ? '0' : '5 000', pad.left - 4, y + 3);
-  });
-
-  // Gradient
-  const grad = ctx.createLinearGradient(0, pad.top, 0, pad.top + ph);
-  grad.addColorStop(0, '#ffd16633');
-  grad.addColorStop(1, '#ffd16600');
-  ctx.beginPath();
-  ctx.moveTo(xOf(0), yOf(data[0]));
-  for (let i = 1; i < data.length; i++) ctx.lineTo(xOf(i), yOf(data[i]));
-  ctx.lineTo(xOf(data.length - 1), pad.top + ph);
-  ctx.lineTo(xOf(0), pad.top + ph);
-  ctx.closePath();
-  ctx.fillStyle = grad;
-  ctx.fill();
-
-  // Ligne
-  ctx.beginPath();
-  ctx.lineWidth = 2;
-  for (let i = 0; i < data.length; i++) {
-    ctx.strokeStyle = data[i] >= 10000 ? '#4dfa8a' : '#ffd166';
-    if (i === 0) ctx.moveTo(xOf(0), yOf(data[0]));
-    else {
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(xOf(i-1), yOf(data[i-1]));
-      ctx.lineTo(xOf(i), yOf(data[i]));
-    }
-  }
-  ctx.stroke();
-
-  // Points
-  data.forEach((v, i) => {
-    ctx.beginPath();
-    ctx.arc(xOf(i), yOf(v), 3, 0, Math.PI * 2);
-    ctx.fillStyle = v >= 10000 ? '#4dfa8a' : '#ffd166';
-    ctx.fill();
-  });
-
-  // Labels X
-  ctx.fillStyle = '#3a3a5a';
-  ctx.font = '9px ui-monospace, monospace';
-  ctx.textAlign = 'center';
-  const step = Math.max(1, Math.floor(data.length / 7));
-  for (let i = 0; i < labels.length; i += step) {
-    ctx.fillText(labels[i], xOf(i), pad.top + ph + 16);
-  }
-}
-
-function addPas() {
-  const date = document.getElementById('pasDate').value;
-  const steps = parseInt(document.getElementById('pasSteps').value);
-  if (!date || isNaN(steps)) return;
-  if (!state.pas) state.pas = [];
-  const existing = state.pas.findIndex(e => e.date === date);
-  if (existing >= 0) state.pas[existing].steps = steps;
-  else state.pas.push({ date, steps });
-  state.pas.sort((a, b) => a.date.localeCompare(b.date));
-  saveState();
-  render();
-}
-
-function deletePas(date) {
-  if (!confirm("Supprimer cette entrée ?")) return;
-  state.pas = (state.pas || []).filter(e => e.date !== date);
-  saveState();
-  render();
-}
-
-// ══════════════════════════════════════════════
-// PROG
-// ══════════════════════════════════════════════
-// ── PROG ──
-function genId() { return Math.random().toString(36).slice(2,9); }
-function escH(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'); }
-function initProg() { if (!state.prog) state.prog = []; }
-function fmtTime(s) { const m=Math.floor(s/60),sec=s%60; return m>0?(sec>0?m+'min '+sec+'s':m+'min'):s+'s'; }
-
-function migrateProg() {
-  initProg();
-  state.prog = state.prog.map(sess => ({
-    ...sess,
-    exercises: (sess.exercises||[]).map(ex => {
-      if (ex.series) return ex;
-      const n = ex.sets||1;
-      return { id:ex.id, name:ex.name, restTime:ex.restTime||90,
-        series: Array.from({length:n}, ()=>({id:genId(),reps:ex.reps||8,weight:ex.weight||0,done:false})) };
-    })
-  }));
-}
-
-// ── SESSION STATES (transient) ──
-// 'collapsed' | 'view' | 'edit' | 'active'
-let sSt = {};
-function getSSt(sid) { return sSt[sid] || 'collapsed'; }
-function setSSt(sid, st) { sSt[sid] = st; render(); }
-
-function toggleSession(sid) {
-  const cur = getSSt(sid);
-  setSSt(sid, cur === 'collapsed' ? 'view' : 'collapsed');
-}
-function editSession(sid) { setSSt(sid, 'edit'); }
-function doneEdit(sid) { setSSt(sid, 'view'); }
-function startSession(sid) { setSSt(sid, 'active'); }
-
-// ── TIMER ──
-let tmr = { running:false, exId:null, remaining:0, total:0, iv:null };
-
-function startTimer(exId, seconds) {
-  if (tmr.iv) clearInterval(tmr.iv);
-  tmr = { running:true, exId, remaining:seconds, total:seconds, iv:null };
-  const cd = document.getElementById('tcd-'+exId);
-  if (cd) cd.style.display = 'flex';
-  updateTimerDOM();
-  tmr.iv = setInterval(tickTimer, 1000);
-}
-function stopTimer() {
-  if (tmr.iv) clearInterval(tmr.iv);
-  const eid = tmr.exId;
-  tmr = { running:false, exId:null, remaining:0, total:0, iv:null };
-  const cd = document.getElementById('tcd-'+eid);
-  if (cd) cd.style.display = 'none';
-}
-function tickTimer() {
-  tmr.remaining--;
-  if (tmr.remaining <= 0) {
-    if (navigator.vibrate) navigator.vibrate([300,100,300,100,300]);
-    stopTimer(); return;
-  }
-  updateTimerDOM();
-}
-function updateTimerDOM() {
-  const tel = document.getElementById('ttd-'+tmr.exId);
-  const fel = document.getElementById('tpf-'+tmr.exId);
-  if (!tel) return;
-  const m=Math.floor(tmr.remaining/60), s=tmr.remaining%60;
-  tel.textContent = m+':'+s.toString().padStart(2,'0');
-  if (fel) fel.style.width = ((tmr.remaining/tmr.total)*100)+'%';
-}
-function timeOptions(sel) {
-  let h='';
-  for(let s=15;s<=240;s+=15){
-    const m=Math.floor(s/60),sec=s%60;
-    const l=m>0?(sec>0?m+'min '+sec+'s':m+'min'):s+'s';
-    h+='<option value="'+s+'"'+(s===sel?' selected':'')+'>'+l+'</option>';
-  }
-  return h;
-}
-function setRestTime(sid,eid,val){
-  const s=state.prog.find(s=>s.id===sid), e=s?.exercises.find(e=>e.id===eid);
-  if(e){e.restTime=parseInt(val);saveState();}
-}
-
-// ── SERIES ──
-function addSeries(sid,eid){
-  const s=state.prog.find(s=>s.id===sid), e=s?.exercises.find(e=>e.id===eid);
-  if(!e)return;
-  const last=e.series[e.series.length-1];
-  e.series.push({id:genId(),reps:last?.reps||8,weight:last?.weight||0,done:false});
-  saveState(); render();
-}
-function delSeries(sid,eid,srid){
-  const s=state.prog.find(s=>s.id===sid), e=s?.exercises.find(e=>e.id===eid);
-  if(e&&e.series.length>1){e.series=e.series.filter(sr=>sr.id!==srid);saveState();render();}
-}
-function updateSeries(sid,eid,srid,field,val){
-  const s=state.prog.find(s=>s.id===sid), e=s?.exercises.find(e=>e.id===eid);
-  const sr=e?.series.find(sr=>sr.id===srid);
-  if(sr){sr[field]=parseFloat(val)||0;saveState();}
-}
-function toggleSeries(sid,eid,srid,checked){
-  const s=state.prog.find(s=>s.id===sid), e=s?.exercises.find(e=>e.id===eid);
-  const sr=e?.series.find(sr=>sr.id===srid);
-  if(!sr)return;
-  sr.done=checked; saveState();
-  const row=document.getElementById('sr-'+srid);
-  if(row)row.classList.toggle('series-done',checked);
-  if(checked&&e.restTime)startTimer(eid,e.restTime);
-}
-
-// ── SESSION CRUD ──
-function addSession(){
-  initProg();
-  const id=genId();
-  state.prog.push({id,name:'Séance '+(state.prog.length+1),exercises:[]});
-  sSt[id]='edit';
-  saveState(); render();
-}
-function delSession(sid){
-  if(!confirm('Supprimer cette séance ?'))return;
-  state.prog=state.prog.filter(s=>s.id!==sid);
-  delete sSt[sid]; saveState(); render();
-}
-function renameSession(sid,v){
-  const s=state.prog.find(s=>s.id===sid);
-  if(s){s.name=v;saveState();}
-}
-function addExercise(sid){
-  const s=state.prog.find(s=>s.id===sid);
-  if(s){s.exercises.push({id:genId(),name:'',restTime:90,series:[{id:genId(),reps:8,weight:0,done:false}]});
-  saveState();render();}
-}
-function delExercise(sid,eid){
-  const s=state.prog.find(s=>s.id===sid);
-  if(s){s.exercises=s.exercises.filter(e=>e.id!==eid);saveState();render();}
-}
-function renameExercise(sid,eid,v){
-  const s=state.prog.find(s=>s.id===sid), e=s?.exercises.find(e=>e.id===eid);
-  if(e){e.name=v;saveState();}
-}
-function completeSession(sid){
-  const s=state.prog.find(s=>s.id===sid);
-  if(!s)return;
-  s.exercises.forEach(e=>e.series.forEach(sr=>sr.done=false));
-  saveState();
-  if(tmr.running)stopTimer();
-  setSSt(sid,'collapsed');
-}
-
-// ── DRAG (edit mode only) ──
-let tDrag=null;
-function startDrag(e,type,si,ei){
-  e.preventDefault();
-  const touch=e.touches[0]; migrateProg();
-  const label=type==='session'?(state.prog[si]?.name||'Séance'):(state.prog[si]?.exercises[ei]?.name||'Exercice');
-  const ghost=document.createElement('div');
-  ghost.className='ghost-el';
-  ghost.textContent='☰  '+label;
-  ghost.style.left=(touch.clientX-20)+'px';
-  ghost.style.top=(touch.clientY-20)+'px';
-  document.body.appendChild(ghost);
-  tDrag={type,si,ei,ghost,over:null};
-  document.addEventListener('touchmove',onDragMove,{passive:false});
-  document.addEventListener('touchend',onDragEnd);
-}
-function onDragMove(e){
-  if(!tDrag)return; e.preventDefault();
-  const touch=e.touches[0];
-  tDrag.ghost.style.left=(touch.clientX-20)+'px';
-  tDrag.ghost.style.top=(touch.clientY-20)+'px';
-  if(tDrag.over){tDrag.over.classList.remove('drag-over');tDrag.over=null;}
-  tDrag.ghost.style.visibility='hidden';
-  const el=document.elementFromPoint(touch.clientX,touch.clientY);
-  tDrag.ghost.style.visibility='';
-  if(!el)return;
-  if(tDrag.type==='session'){const c=el.closest('.session-card');if(c){c.classList.add('drag-over');tDrag.over=c;}}
-  else{const r=el.closest('.exercise-row');if(r){r.classList.add('drag-over');tDrag.over=r;}}
-}
-function onDragEnd(e){
-  if(!tDrag)return;
-  document.removeEventListener('touchmove',onDragMove);
-  document.removeEventListener('touchend',onDragEnd);
-  tDrag.ghost.remove();
-  if(tDrag.over)tDrag.over.classList.remove('drag-over');
-  const touch=e.changedTouches[0];
-  tDrag.ghost.style.visibility='hidden';
-  const el=document.elementFromPoint(touch.clientX,touch.clientY);
-  if(el){
-    if(tDrag.type==='session'){
-      const card=el.closest('.session-card');
-      if(card){const tid=card.id.replace('sc-',''),tidx=state.prog.findIndex(s=>s.id===tid);
-      if(tidx!==-1&&tidx!==tDrag.si){const[m]=state.prog.splice(tDrag.si,1);state.prog.splice(tidx,0,m);saveState();}}
-    }else{
-      const row=el.closest('.exercise-row');
-      if(row){const tid=row.id.replace('ec-',''),sess=state.prog[tDrag.si];
-      if(sess){const tidx=sess.exercises.findIndex(ex=>ex.id===tid);
-      if(tidx!==-1&&tidx!==tDrag.ei){const[m]=sess.exercises.splice(tDrag.ei,1);sess.exercises.splice(tidx,0,m);saveState();}}}
-    }
-  }
-  tDrag=null; render();
-}
-
-// ── RENDER PROG ──
-function renderProg(c){
-  migrateProg();
-  const prog=state.prog;
-  let html='<button class="add-session-btn" onclick="addSession()">+ AJOUTER UNE SÉANCE</button>';
-
-  prog.forEach((sess,si)=>{
-    const st=getSSt(sess.id);
-    html+='<div class="session-card'+(st==='active'?' sess-active':'')+'" id="sc-'+sess.id+'">';
-
-    // ── HEADER ──
-    if(st==='collapsed'){
-      html+='<div class="session-header" onclick="toggleSession(\''+sess.id+'\')">'
-        +'<span class="sess-arrow">▶</span>'
-        +'<span class="sess-name">'+escH(sess.name)+'</span>'
-        +'<button class="start-btn" onclick="event.stopPropagation();startSession(\''+sess.id+'\')">▶ Commencer</button>'
-        +'</div>';
-    } else if(st==='view'){
-      html+='<div class="session-header" onclick="toggleSession(\''+sess.id+'\')">'
-        +'<span class="sess-arrow">▼</span>'
-        +'<span class="sess-name">'+escH(sess.name)+'</span>'
-        +'<button class="edit-btn" onclick="event.stopPropagation();editSession(\''+sess.id+'\')">✏️ Modifier</button>'
-        +'</div>';
-    } else if(st==='edit'){
-      html+='<div class="session-header edit-header">'
-        +'<span class="drag-handle" ontouchstart="startDrag(event,\'session\','+si+',-1)">☰</span>'
-        +'<input class="session-name-input" value="'+escH(sess.name)+'" onblur="renameSession(\''+sess.id+'\',this.value)" placeholder="Nom de la séance"/>'
-        +'<button class="done-edit-btn" onclick="doneEdit(\''+sess.id+'\')">✓ Terminé</button>'
-        +'</div>';
-    } else if(st==='active'){
-      html+='<div class="session-header active-header">'
-        +'<span class="active-dot">🔥</span>'
-        +'<span class="sess-name">'+escH(sess.name)+'</span>'
-        +'<span class="active-label">EN COURS</span>'
-        +'</div>';
-    }
-
-    // ── BODY ──
-    if(st==='view'){
-      html+='<div class="session-body">';
-      if(sess.exercises.length===0){
-        html+='<div style="padding:16px;color:#3a3a5a;font-size:12px;text-align:center">Aucun exercice — appuie sur Modifier pour en ajouter.</div>';
-      } else {
-        sess.exercises.forEach(ex=>{
-          html+='<div class="ex-view-row">'
-            +'<div class="ex-view-name">'+escH(ex.name||'—')
-            +'<span class="ex-view-rest"> ⏱ '+fmtTime(ex.restTime||90)+'</span></div>';
-          ex.series.forEach((sr,idx)=>{
-            html+='<div class="series-view">Série '+(idx+1)+' — '+sr.reps+' reps × '+sr.weight+' kg</div>';
-          });
-          html+='</div>';
-        });
-      }
-      html+='<button class="start-session-btn" onclick="startSession(\''+sess.id+'\')">▶ Commencer la séance</button>';
-      html+='</div>';
-
-    } else if(st==='edit'){
-      html+='<div class="session-body"><div class="exercises-list">';
-      sess.exercises.forEach((ex,ei)=>{
-        html+='<div class="exercise-row" id="ec-'+ex.id+'">'
-          +'<div class="ex-row-top">'
-          +'<span class="drag-handle" ontouchstart="startDrag(event,\'exercise\','+si+','+ei+')">☰</span>'
-          +'<input class="ex-name-input" value="'+escH(ex.name)+'" onblur="renameExercise(\''+sess.id+'\',\''+ex.id+'\',this.value)" placeholder="Nom de l\'exercice"/>'
-          +'<button class="del-btn" onclick="delExercise(\''+sess.id+'\',\''+ex.id+'\')">✕</button>'
-          +'</div>'
-          +'<div class="timer-wrap">'
-          +'<div class="timer-selector">'
-          +'<span style="font-size:14px">⏱</span>'
-          +'<span class="timer-label">Repos</span>'
-          +'<select class="timer-select" onchange="setRestTime(\''+sess.id+'\',\''+ex.id+'\',this.value)">'
-          +timeOptions(ex.restTime||90)+'</select></div></div>'
-          +'<div class="series-list">';
-        ex.series.forEach(sr=>{
-          html+='<div class="series-row" id="sr-'+sr.id+'">'
-            +'<input type="number" class="input series-num" value="'+sr.reps+'" min="1" onchange="updateSeries(\''+sess.id+'\',\''+ex.id+'\',\''+sr.id+'\',\'reps\',this.value)"/>'
-            +'<span class="series-sep">reps</span>'
-            +'<input type="number" class="input series-num" value="'+sr.weight+'" min="0" step="0.5" onchange="updateSeries(\''+sess.id+'\',\''+ex.id+'\',\''+sr.id+'\',\'weight\',this.value)"/>'
-            +'<span class="series-sep">kg</span>'
-            +'<button class="del-btn" onclick="delSeries(\''+sess.id+'\',\''+ex.id+'\',\''+sr.id+'\')">✕</button>'
-            +'</div>';
-        });
-        html+='</div>'
-          +'<button class="add-series-btn" onclick="addSeries(\''+sess.id+'\',\''+ex.id+'\')">+ Ajouter une série</button>'
-          +'</div>';
-      });
-      html+='</div>'
-        +'<button class="add-ex-btn" onclick="addExercise(\''+sess.id+'\')">+ Ajouter un exercice</button>'
-        +'<button class="done-edit-btn-full" onclick="doneEdit(\''+sess.id+'\')">✓ Modification terminée</button>'
-        +'</div>';
-
-    } else if(st==='active'){
-      html+='<div class="session-body"><div class="exercises-list">';
-      sess.exercises.forEach(ex=>{
-        html+='<div class="exercise-row" id="ec-'+ex.id+'">'
-          +'<div class="ex-active-name">'+escH(ex.name||'Exercice')+'</div>'
-          +'<div class="timer-wrap">'
-          +'<div class="timer-selector">'
-          +'<span style="font-size:14px">⏱</span>'
-          +'<span class="timer-label">Repos</span>'
-          +'<span class="timer-val">'+fmtTime(ex.restTime||90)+'</span>'
-          +'</div>'
-          +'<div class="timer-countdown" id="tcd-'+ex.id+'" style="display:none">'
-          +'<div class="timer-bar-wrap"><div class="timer-bar-fill" id="tpf-'+ex.id+'" style="width:100%"></div></div>'
-          +'<div class="timer-time-row">'
-          +'<span class="timer-num" id="ttd-'+ex.id+'">0:00</span>'
-          +'<button class="timer-stop-btn" onclick="stopTimer()">✕</button>'
-          +'</div></div></div>'
-          +'<div class="series-list">';
-        ex.series.forEach(sr=>{
-          html+='<div class="series-row'+(sr.done?' series-done':'')+'" id="sr-'+sr.id+'">'
-            +'<input type="checkbox" class="series-cb"'+(sr.done?' checked':'')+' onchange="toggleSeries(\''+sess.id+'\',\''+ex.id+'\',\''+sr.id+'\',this.checked)"/>'
-            +'<span class="series-val">'+sr.reps+' reps × '+sr.weight+' kg</span>'
-            +'</div>';
-        });
-        html+='</div></div>';
-      });
-      html+='</div>'
-        +'<label class="sess-done-wrap">'
-        +'<input type="checkbox" id="sess-done-'+sess.id+'" onchange="if(this.checked)completeSession(\''+sess.id+'\')">'
-        +'<span>✅ Séance terminée</span></label>';
-    }
-
-    html+='</div>'; // end session-card
-  });
-
-  if(!prog.length){
-    html+='<div class="empty"><div class="empty-icon">💪</div><p>Crée ta première séance<br>en appuyant sur le bouton ci-dessus.</p></div>';
-  }
-  c.innerHTML=html;
-}
-
-// ══════════════════════════════════════════════
-// INIT
-// ══════════════════════════════════════════════
+// ══ INIT ════════════════════════════════════════
 loadState();
 render();
-
-// Re-draw charts on resize
-window.addEventListener("resize", () => {
-  if (currentTab === "graphe") renderGraphe(document.getElementById("content"));
-});
 </script>
 </body>
 </html>
