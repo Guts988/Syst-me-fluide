@@ -5,12 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Calorie Tracker</title>
 <style>
-:root {
+:root{
   --bg:#07070f;--surface:#0e0e1c;--surface2:#13132a;
   --border:#1e1e3a;--border2:#2a2a4a;
   --text:#e8e8ff;--muted:#5a5a8a;--dim:#3a3a5a;
   --accent:#7b7bff;--accent-dim:#3a3a8a;
-  --gold:#ffd166;--gold-dim:#ffd16622;
   --up:#4dfa8a;--up-bg:#081a10;--up-dim:#4dfa8a22;
   --down:#ff6b6b;--down-bg:#1a0808;--down-dim:#ff6b6b22;
   --mass:#ff9f43;--mass-bg:#1a0f00;--mass-dim:#ff9f4322;
@@ -22,58 +21,43 @@
 button{-webkit-appearance:none;appearance:none;font-family:var(--mono);cursor:pointer;}
 body{background:var(--bg);color:var(--text);font-family:var(--mono);min-height:100vh;overflow-x:hidden;}
 .app{max-width:680px;margin:0 auto;padding-bottom:80px;}
-
-/* HEADER */
 .header{padding:24px 20px 16px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,#0d0d1f 0%,transparent 100%);position:sticky;top:0;z-index:10;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);}
 .eyebrow{font-size:9px;letter-spacing:4px;color:var(--muted);text-transform:uppercase;margin-bottom:4px;}
 .header h1{font-family:var(--display);font-size:22px;font-weight:800;letter-spacing:-0.5px;}
 .header-stats{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
 .stat-pill{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:3px 12px;font-size:11px;color:var(--muted);display:flex;align-items:center;gap:5px;}
 .stat-pill .val{color:var(--text);font-weight:500;}
-.stat-pill.deficit{background:var(--down-bg);border-color:var(--down-dim);color:var(--down);}
-.stat-pill.reverse{background:var(--up-bg);border-color:var(--up-dim);color:var(--up);}
-.stat-pill.masse{background:var(--mass-bg);border-color:var(--mass-dim);color:var(--mass);}
-
-/* NAV */
+.stat-pill.p-deficit{background:var(--down-bg);border-color:var(--down-dim);color:var(--down);}
+.stat-pill.p-reverse{background:var(--up-bg);border-color:var(--up-dim);color:var(--up);}
+.stat-pill.p-masse{background:var(--mass-bg);border-color:var(--mass-dim);color:var(--mass);}
 .nav{display:flex;padding:0 20px;border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;}
 .nav::-webkit-scrollbar{display:none;}
 .tab{background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);padding:11px 14px;font-size:11px;letter-spacing:0.5px;transition:all 0.2s;white-space:nowrap;margin-bottom:-1px;}
 .tab.active{border-bottom-color:var(--accent);color:var(--text);}
-
-/* CONTENT */
 .content{padding:20px;}
-
-/* ENTRY FORM */
 .add-entry{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:20px;}
-.add-entry-title{font-family:var(--display);font-size:13px;font-weight:600;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;}
+.add-title{font-family:var(--display);font-size:13px;font-weight:600;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;}
 .entry-row{display:flex;flex-direction:column;gap:12px;align-items:center;}
 .field{display:flex;flex-direction:column;gap:5px;width:80%;}
 .field label{font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;}
-.input{background:var(--bg);border:1px solid var(--border2);border-radius:6px;padding:9px 12px;color:var(--text);font-family:var(--mono);font-size:14px;outline:none;transition:border-color 0.2s;width:100%;}
-.input:focus{border-color:var(--accent-dim);}
-.input::placeholder{color:var(--dim);}
-.btn{background:var(--accent-dim);border:1px solid var(--accent);color:var(--accent);border-radius:6px;padding:9px 18px;font-size:12px;letter-spacing:1px;transition:all 0.2s;white-space:nowrap;text-align:center;width:80%;}
-.btn:hover{background:var(--accent);color:#000;}
+.input{background:var(--bg);border:1px solid var(--border2);border-radius:6px;padding:9px 12px;color:var(--text);font-family:var(--mono);font-size:14px;outline:none;width:100%;}
+.btn{background:var(--accent-dim);border:1px solid var(--accent);color:var(--accent);border-radius:6px;padding:9px 18px;font-size:12px;letter-spacing:1px;text-align:center;width:80%;}
 .btn-danger{background:transparent;border-color:var(--down);color:var(--down);}
 .btn-sm{padding:5px 10px;font-size:10px;width:auto;}
-
-/* TODAY BANNER */
 .today-banner{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);padding:16px 18px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
-.today-banner.mode-deficit{border-left:3px solid var(--down);}
-.today-banner.mode-reverse{border-left:3px solid var(--up);}
-.today-banner.mode-masse{border-left:3px solid var(--mass);}
+.b-deficit{border-left:3px solid var(--down);}
+.b-reverse{border-left:3px solid var(--up);}
+.b-masse{border-left:3px solid var(--mass);}
 .today-label{font-size:10px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:4px;}
 .today-cal{font-family:var(--display);font-size:32px;font-weight:800;line-height:1;}
-.today-cal.c-deficit{color:var(--down);}
-.today-cal.c-reverse{color:var(--up);}
-.today-cal.c-masse{color:var(--mass);}
+.c-deficit{color:var(--down);}
+.c-reverse{color:var(--up);}
+.c-masse{color:var(--mass);}
 .today-sub{font-size:11px;color:var(--muted);margin-top:4px;}
-
-/* TABLE */
 .table-wrap{overflow-x:auto;}
 table{width:100%;border-collapse:collapse;font-size:13px;}
 thead th{padding:8px 12px;background:var(--surface2);color:var(--muted);text-align:left;border-bottom:1px solid var(--border);font-weight:400;font-size:10px;letter-spacing:2px;text-transform:uppercase;white-space:nowrap;}
-tbody tr{border-bottom:1px solid var(--border);transition:background 0.1s;}
+tbody tr{border-bottom:1px solid var(--border);}
 tbody tr:hover{background:var(--surface);}
 tbody tr:last-child{border-bottom:none;}
 td{padding:10px 12px;vertical-align:middle;}
@@ -86,53 +70,44 @@ td{padding:10px 12px;vertical-align:middle;}
 .delta-same{color:var(--muted);}
 .td-cal{font-size:16px;font-weight:500;font-family:var(--display);}
 td.del-col{text-align:center;}
-.del-btn{background:none;border:none;color:var(--border2);font-size:14px;padding:4px 6px;border-radius:4px;transition:all 0.2s;}
-.del-btn:hover{color:var(--down);background:var(--down-bg);}
+.del-btn{background:none;border:none;color:var(--border2);font-size:14px;padding:4px 6px;border-radius:4px;}
+.del-btn:hover{color:var(--down);}
 tr.r-down{background:#200808;}
 tr.r-mid{background:#18080a;}
 tr.r-low{background:#1a1a0a;}
 tr.r-up{background:#081508;}
 tr.r-mass{background:#0f0a00;}
-
-/* EMPTY */
 .empty{text-align:center;padding:48px 20px;color:var(--muted);}
 .empty-icon{font-size:36px;margin-bottom:12px;opacity:0.4;}
 .empty p{font-size:13px;line-height:1.7;}
-
-/* CHART */
 .chart-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:20px;}
 .chart-title{font-size:10px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:14px;}
 canvas{width:100%!important;display:block;}
-
-/* RULES */
-.rules-table-wrap{overflow-x:auto;margin-bottom:20px;}
-.rules-table{width:100%;border-collapse:collapse;font-size:12px;}
-.rules-table th{background:var(--surface2);color:var(--muted);padding:8px 10px;text-align:left;border:1px solid var(--border);font-size:10px;letter-spacing:1px;text-transform:uppercase;white-space:nowrap;}
-.rules-table td{padding:10px;border:1px solid var(--border);color:var(--text);vertical-align:top;line-height:1.5;}
-.rules-table td:first-child{font-weight:700;white-space:nowrap;}
-.phase-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:14px;overflow:hidden;}
-.phase-header{padding:10px 16px;font-family:var(--display);font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;border-bottom:1px solid var(--border);}
-.phase-body{padding:14px 16px;}
-.phase-section{margin-bottom:12px;}
-.phase-section-title{font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:6px;}
-.phase-item{display:flex;gap:8px;padding:4px 0;border-bottom:1px solid #ffffff06;font-size:12px;color:#aaa;line-height:1.5;}
-.phase-item:last-child{border-bottom:none;}
-.phase-dot{color:var(--dim);flex-shrink:0;}
-.info-note{background:var(--surface2);border-left:3px solid var(--accent);border-radius:0 6px 6px 0;padding:10px 14px;font-size:12px;color:var(--muted);line-height:1.7;margin-top:10px;}
-.info-note strong{color:var(--text);}
-
-/* SETTINGS */
+.rtw{overflow-x:auto;margin-bottom:20px;}
+.rt{width:100%;border-collapse:collapse;font-size:12px;}
+.rt th{background:var(--surface2);color:var(--muted);padding:8px 10px;text-align:left;border:1px solid var(--border);font-size:10px;letter-spacing:1px;text-transform:uppercase;white-space:nowrap;}
+.rt td{padding:10px;border:1px solid var(--border);color:var(--text);vertical-align:top;line-height:1.5;}
+.rt td:first-child{font-weight:700;white-space:nowrap;}
+.pb{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:14px;overflow:hidden;}
+.ph{padding:10px 16px;font-family:var(--display);font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;border-bottom:1px solid var(--border);}
+.pbody{padding:14px 16px;}
+.psec{margin-bottom:12px;}
+.pst{font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:6px;}
+.pi{display:flex;gap:8px;padding:4px 0;border-bottom:1px solid #ffffff06;font-size:12px;color:#aaa;line-height:1.5;}
+.pi:last-child{border-bottom:none;}
+.pd{color:var(--dim);flex-shrink:0;}
+.inote{background:var(--surface2);border-left:3px solid var(--accent);border-radius:0 6px 6px 0;padding:10px 14px;font-size:12px;color:var(--muted);line-height:1.7;margin-top:10px;}
+.inote strong{color:var(--text);}
 .settings-section{margin-bottom:24px;}
 .settings-title{font-size:10px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:12px;}
 .settings-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
 .settings-row{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);gap:12px;flex-wrap:wrap;}
 .settings-row:last-child{border-bottom:none;}
-.settings-row .lbl{font-size:13px;color:var(--text);}
-.settings-row .desc{font-size:11px;color:var(--muted);margin-top:2px;}
+.lbl{font-size:13px;color:var(--text);}
+.desc{font-size:11px;color:var(--muted);margin-top:2px;}
 .mode-select{background:var(--bg);border:1px solid var(--border2);color:var(--text);border-radius:6px;padding:6px 10px;font-family:var(--mono);font-size:13px;outline:none;}
-
-@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
-.content>*{animation:fadeIn 0.25s ease both;}
+@keyframes fi{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.content>*{animation:fi 0.25s ease both;}
 @media(max-width:500px){h1{font-size:18px;}.today-cal{font-size:26px;}}
 ::-webkit-scrollbar{width:4px;height:4px;}
 ::-webkit-scrollbar-track{background:var(--bg);}
@@ -144,527 +119,427 @@ canvas{width:100%!important;display:block;}
   <div class="header">
     <div class="eyebrow">Protocole Calorique</div>
     <h1>Calorie Tracker</h1>
-    <div class="header-stats" id="headerStats"></div>
+    <div class="header-stats" id="hs"></div>
   </div>
   <div class="nav">
-    <button class="tab active" data-tab="journal">📅 Journal</button>
-    <button class="tab" data-tab="graphe">📈 Graphe</button>
-    <button class="tab" data-tab="regles">📖 Règles</button>
-    <button class="tab" data-tab="reglages">⚙️ Réglages</button>
+    <button class="tab active" data-tab="journal">&#128197; Journal</button>
+    <button class="tab" data-tab="graphe">&#128200; Graphe</button>
+    <button class="tab" data-tab="regles">&#128218; R&egrave;gles</button>
+    <button class="tab" data-tab="reglages">&#9881;&#65039; R&eacute;glages</button>
   </div>
   <div class="content" id="content"></div>
 </div>
-
 <script>
-// ══ STATE ══════════════════════════════════════
-const DEFAULT_SETTINGS = {
-  startCal: 2200,
-  minCal: 1200,
-  maxCal: 9999,
-  step: 200,
-  mode: 'deficit'
-};
+var DEFAULT = {startCal:2200,minCal:1200,maxCal:9999,step:200,mode:'deficit'};
+var state = {entries:[],settings:Object.assign({},DEFAULT)};
 
-let state = { entries: [], settings: { ...DEFAULT_SETTINGS } };
-
-function loadState() {
-  try {
-    const s = localStorage.getItem('caltracker_v3');
-    if (s) state = { ...state, ...JSON.parse(s) };
-  } catch(e) {}
+function loadState(){
+  try{var s=localStorage.getItem('calt3');if(s)state=Object.assign({},state,JSON.parse(s));}catch(e){}
 }
-function saveState() {
-  localStorage.setItem('caltracker_v3', JSON.stringify(state));
-}
+function saveState(){localStorage.setItem('calt3',JSON.stringify(state));}
 
-// ══ PROTOCOL LOGIC ════════════════════════════
-function computeProtocol(entries) {
-  if (!entries.length) return [];
-  const sorted = [...entries].sort((a, b) => a.date.localeCompare(b.date));
-  const { startCal, minCal, step, mode } = state.settings;
-  const result = [];
-
-  for (let i = 0; i < sorted.length; i++) {
-    const entry = sorted[i];
-    const w = entry.weight;
-
-    if (i === 0) {
-      result.push({ ...entry, cal: startCal });
-      continue;
+function computeProtocol(entries){
+  if(!entries.length)return[];
+  var sorted=entries.slice().sort(function(a,b){return a.date<b.date?-1:1;});
+  var startCal=state.settings.startCal;
+  var minCal=state.settings.minCal;
+  var step=state.settings.step;
+  var mode=state.settings.mode;
+  var result=[];
+  for(var i=0;i<sorted.length;i++){
+    var entry=sorted[i];
+    var w=entry.weight;
+    if(i===0){result.push({date:entry.date,weight:w,cal:startCal});continue;}
+    var prev=result[i-1];
+    var consec=0;
+    for(var k=i-1;k>=0;k--){if(result[k].cal===prev.cal)consec++;else break;}
+    var firstIdx=i-consec;
+    var refIdx=firstIdx+1;
+    var weightRef=sorted[refIdx]?sorted[refIdx].weight:sorted[firstIdx].weight;
+    if(consec<3){result.push({date:entry.date,weight:w,cal:prev.cal});continue;}
+    var isDown=w<weightRef;
+    var nextCal;
+    if(mode==='deficit'){
+      nextCal=isDown?prev.cal:Math.max(minCal,prev.cal-step);
+    }else{
+      nextCal=isDown?prev.cal+step:prev.cal;
     }
-
-    const prev = result[i - 1];
-    if (!prev) continue;
-
-    // Jours consécutifs au même total
-    let consec = 0;
-    for (let k = i - 1; k >= 0; k--) {
-      if (result[k].cal === prev.cal) consec++;
-      else break;
-    }
-
-    // Référence = poids J2 à ce total (J1 reflète l'ancien régime)
-    const firstIdx = i - consec;
-    const refIdx = firstIdx + 1;
-    const weightRef = sorted[refIdx] ? sorted[refIdx].weight : sorted[firstIdx].weight;
-
-    // Minimum 3 jours garantis → décision à partir de J4 (consec >= 3)
-    if (consec < 3) {
-      result.push({ ...entry, cal: prev.cal });
-      continue;
-    }
-
-    // Tendance : poids actuel vs J2
-    const isDown = w < weightRef;  // true = poids en baisse
-
-    let nextCal;
-    if (mode === 'deficit') {
-      // Baisse → maintien / Stagne ou hausse → -200
-      nextCal = isDown ? prev.cal : Math.max(minCal, prev.cal - step);
-    } else {
-      // reverse ou masse : Baisse → +200 / Stagne ou hausse → maintien
-      nextCal = isDown ? prev.cal + step : prev.cal;
-    }
-
-    result.push({ ...entry, cal: nextCal });
+    result.push({date:entry.date,weight:w,cal:nextCal});
   }
   return result;
 }
 
-// ══ HELPERS ════════════════════════════════════
-function today() { return new Date().toISOString().slice(0,10); }
+function todayStr(){return new Date().toISOString().slice(0,10);}
 
-function fmtDate(d) {
-  const [y,m,day] = d.split('-');
-  return day+'/'+m+'/'+y;
+function fmtDate(d){var p=d.split('-');return p[2]+'/'+p[1]+'/'+p[0];}
+
+function getModeInfo(){
+  var m=state.settings.mode;
+  if(m==='deficit')return{label:'&darr; D&Eacute;FICIT',pill:'p-deficit',cal:'c-deficit',ban:'b-deficit'};
+  if(m==='reverse')return{label:'&uarr; REVERSE DIET',pill:'p-reverse',cal:'c-reverse',ban:'b-reverse'};
+  return{label:'&#128170; PRISE DE MASSE',pill:'p-masse',cal:'c-masse',ban:'b-masse'};
 }
 
-function modeInfo() {
-  const m = state.settings.mode;
-  if (m === 'deficit')
-    return { label:'↓ DÉFICIT', pillClass:'deficit', calClass:'c-deficit', bannerClass:'mode-deficit' };
-  if (m === 'reverse')
-    return { label:'↑ REVERSE DIET', pillClass:'reverse', calClass:'c-reverse', bannerClass:'mode-reverse' };
-  return { label:'💪 PRISE DE MASSE', pillClass:'masse', calClass:'c-masse', bannerClass:'mode-masse' };
-}
-
-function calRowClass(cal, mode) {
-  if (mode === 'deficit') {
-    if (cal >= 2200) return 'r-low';
-    if (cal >= 1800) return 'r-mid';
+function rowClass(cal){
+  var m=state.settings.mode;
+  if(m==='deficit'){
+    if(cal>=2200)return 'r-low';
+    if(cal>=1800)return 'r-mid';
     return 'r-down';
   }
-  if (mode === 'reverse') return 'r-up';
+  if(m==='reverse')return 'r-up';
   return 'r-mass';
 }
 
-function weightDelta(sorted, i) {
-  if (i === 0) return null;
-  const diff = sorted[i].weight - sorted[i-1].weight;
-  if (Math.abs(diff) < 0.05) return { val:'→', cls:'delta-same' };
-  if (diff < 0) return { val:'-'+Math.abs(diff).toFixed(1)+' kg', cls:'delta-down' };
-  return { val:'+'+diff.toFixed(1)+' kg', cls:'delta-up' };
-}
+var currentTab='journal';
 
-// ══ RENDER ════════════════════════════════════
-let currentTab = 'journal';
-
-function render() {
+function render(){
   updateHeader();
-  const c = document.getElementById('content');
-  c.innerHTML = '';
-  if (currentTab === 'journal') renderJournal(c);
-  else if (currentTab === 'graphe') renderGraphe(c);
-  else if (currentTab === 'regles') renderRegles(c);
-  else if (currentTab === 'reglages') renderReglages(c);
+  var c=document.getElementById('content');
+  c.innerHTML='';
+  if(currentTab==='journal')renderJournal(c);
+  else if(currentTab==='graphe')renderGraphe(c);
+  else if(currentTab==='regles')renderRegles(c);
+  else if(currentTab==='reglages')renderReglages(c);
 }
 
-function updateHeader() {
-  const el = document.getElementById('headerStats');
-  const protocol = computeProtocol(state.entries);
-  if (!protocol.length) { el.innerHTML = ''; return; }
-  const last = protocol[protocol.length - 1];
-  const mi = modeInfo();
-  el.innerHTML =
-    '<div class="stat-pill '+mi.pillClass+'">'+mi.label+'</div>' +
-    '<div class="stat-pill">Aujourd'hui <span class="val">'+last.cal+' kcal</span></div>' +
+function updateHeader(){
+  var el=document.getElementById('hs');
+  var p=computeProtocol(state.entries);
+  if(!p.length){el.innerHTML='';return;}
+  var last=p[p.length-1];
+  var mi=getModeInfo();
+  el.innerHTML=
+    '<div class="stat-pill '+mi.pill+'">'+mi.label+'</div>'+
+    '<div class="stat-pill">Aujourd&apos;hui <span class="val">'+last.cal+' kcal</span></div>'+
     '<div class="stat-pill">'+state.entries.length+' jours</div>';
 }
 
-// ── JOURNAL ──
-function renderJournal(c) {
-  const protocol = computeProtocol(state.entries);
-  const sorted = [...state.entries].sort((a,b) => a.date.localeCompare(b.date));
-  const mi = modeInfo();
+function renderJournal(c){
+  var protocol=computeProtocol(state.entries);
+  var sorted=state.entries.slice().sort(function(a,b){return a.date<b.date?-1:1;});
+  var mi=getModeInfo();
+  var html='';
 
-  if (protocol.length > 0) {
-    const last = protocol[protocol.length - 1];
-    c.innerHTML +=
-      '<div class="today-banner '+mi.bannerClass+'">' +
-        '<div>' +
-          '<div class="today-label">Objectif du jour</div>' +
-          '<div class="today-cal '+mi.calClass+'">'+last.cal+' <span style="font-size:14px;font-weight:400;opacity:.5">kcal</span></div>' +
-          '<div class="today-sub">'+mi.label+' · Jour '+protocol.length+'</div>' +
-        '</div>' +
-        '<div style="text-align:right">' +
-          '<div class="today-label">Dernier poids</div>' +
-          '<div style="font-size:20px;font-family:var(--display);font-weight:700">'+last.weight.toFixed(1)+' <span style="font-size:12px;opacity:.5">kg</span></div>' +
-          '<div class="today-sub">'+fmtDate(last.date)+'</div>' +
-        '</div>' +
+  if(protocol.length>0){
+    var last=protocol[protocol.length-1];
+    html+=
+      '<div class="today-banner '+mi.ban+'">'+
+        '<div>'+
+          '<div class="today-label">Objectif du jour</div>'+
+          '<div class="today-cal '+mi.cal+'">'+last.cal+' <span style="font-size:14px;font-weight:400;opacity:.5">kcal</span></div>'+
+          '<div class="today-sub">'+mi.label+' &middot; Jour '+protocol.length+'</div>'+
+        '</div>'+
+        '<div style="text-align:right">'+
+          '<div class="today-label">Dernier poids</div>'+
+          '<div style="font-size:20px;font-family:var(--display);font-weight:700">'+last.weight.toFixed(1)+' <span style="font-size:12px;opacity:.5">kg</span></div>'+
+          '<div class="today-sub">'+fmtDate(last.date)+'</div>'+
+        '</div>'+
       '</div>';
   }
 
-  c.innerHTML +=
-    '<div class="add-entry">' +
-      '<div class="add-entry-title">+ Ajouter une entrée</div>' +
-      '<div class="entry-row">' +
-        '<div class="field"><label>Date</label><input class="input" type="date" id="inDate" value="'+today()+'"/></div>' +
-        '<div class="field"><label>Poids (kg)</label><input class="input" type="number" id="inWeight" step="0.1" placeholder="80.0"/></div>' +
-        '<button class="btn" onclick="addEntry()">AJOUTER</button>' +
-      '</div>' +
+  html+=
+    '<div class="add-entry">'+
+      '<div class="add-title">+ Ajouter une entr&eacute;e</div>'+
+      '<div class="entry-row">'+
+        '<div class="field"><label>Date</label><input class="input" type="date" id="inDate" value="'+todayStr()+'"/></div>'+
+        '<div class="field"><label>Poids (kg)</label><input class="input" type="number" id="inWeight" step="0.1" placeholder="80.0"/></div>'+
+        '<button class="btn" onclick="addEntry()">AJOUTER</button>'+
+      '</div>'+
     '</div>';
 
-  if (!protocol.length) {
-    c.innerHTML += '<div class="empty"><div class="empty-icon">⚖️</div><p>Entre ton poids du premier jour<br>pour démarrer le protocole.</p></div>';
-    return;
+  if(!protocol.length){
+    html+='<div class="empty"><div class="empty-icon">&#9878;&#65039;</div><p>Entre ton poids du premier jour<br>pour d&eacute;marrer le protocole.</p></div>';
+    c.innerHTML=html;return;
   }
 
-  const rows = [...protocol].reverse();
-  let html = '<div class="table-wrap"><table><thead><tr>' +
-    '<th>Jour</th><th>Date</th><th>Poids</th><th>Calories</th><th>Statut</th><th></th>' +
+  var rows=protocol.slice().reverse();
+  html+='<div class="table-wrap"><table><thead><tr>'+
+    '<th>Jour</th><th>Date</th><th>Poids</th><th>Calories</th><th>Statut</th><th></th>'+
     '</tr></thead><tbody>';
 
-  rows.forEach(function(row) {
-    const origIdx = sorted.findIndex(function(e) { return e.date === row.date; });
-    const delta = weightDelta(sorted, origIdx);
-    const icon = origIdx === 0 ? '🏁' :
-      (sorted[origIdx].weight < sorted[origIdx-1].weight ? '⬇️' :
-       sorted[origIdx].weight > sorted[origIdx-1].weight ? '⬆️' : '➡️');
-    const rc = calRowClass(row.cal, state.settings.mode);
-    const deltaHtml = delta ? '<div class="weight-delta '+delta.cls+'">'+delta.val+'</div>' : '';
-
-    html +=
-      '<tr class="'+rc+'">' +
-        '<td class="td-day">J'+(origIdx+1)+'</td>' +
-        '<td class="td-date">'+fmtDate(row.date)+'</td>' +
-        '<td class="td-weight">'+row.weight.toFixed(1)+' kg'+deltaHtml+'</td>' +
-        '<td class="td-cal">'+row.cal+'</td>' +
-        '<td>'+icon+'</td>' +
-        '<td class="del-col"><button class="del-btn" onclick="deleteEntry(''+row.date+'')">✕</button></td>' +
+  for(var ri=0;ri<rows.length;ri++){
+    var row=rows[ri];
+    var origIdx=-1;
+    for(var si=0;si<sorted.length;si++){if(sorted[si].date===row.date){origIdx=si;break;}}
+    var icon=origIdx===0?'&#127937;':(sorted[origIdx].weight<(sorted[origIdx-1]||{weight:sorted[origIdx].weight}).weight?'&darr;':sorted[origIdx].weight>(sorted[origIdx-1]||{weight:sorted[origIdx].weight}).weight?'&uarr;':'&rarr;');
+    var delta='';
+    if(origIdx>0){
+      var diff=sorted[origIdx].weight-sorted[origIdx-1].weight;
+      if(Math.abs(diff)<0.05)delta='<div class="weight-delta delta-same">&rarr;</div>';
+      else if(diff<0)delta='<div class="weight-delta delta-down">-'+Math.abs(diff).toFixed(1)+' kg</div>';
+      else delta='<div class="weight-delta delta-up">+'+diff.toFixed(1)+' kg</div>';
+    }
+    html+=
+      '<tr class="'+rowClass(row.cal)+'" data-date="'+row.date+'">'+
+        '<td class="td-day">J'+(origIdx+1)+'</td>'+
+        '<td class="td-date">'+fmtDate(row.date)+'</td>'+
+        '<td class="td-weight">'+row.weight.toFixed(1)+' kg'+delta+'</td>'+
+        '<td class="td-cal">'+row.cal+'</td>'+
+        '<td>'+icon+'</td>'+
+        '<td class="del-col"><button class="del-btn" data-date="'+row.date+'" onclick="deleteEntry(this.dataset.date)">&#x2715;</button></td>'+
       '</tr>';
-  });
-
-  html += '</tbody></table></div>';
-  c.innerHTML += html;
+  }
+  html+='</tbody></table></div>';
+  c.innerHTML=html;
 }
 
-// ── GRAPHE ──
-function renderGraphe(c) {
-  const protocol = computeProtocol(state.entries);
-  if (protocol.length < 2) {
-    c.innerHTML = '<div class="empty"><div class="empty-icon">📈</div><p>Entre au moins 2 jours<br>pour voir les graphes.</p></div>';
+function renderGraphe(c){
+  var p=computeProtocol(state.entries);
+  if(p.length<2){
+    c.innerHTML='<div class="empty"><div class="empty-icon">&#128200;</div><p>Entre au moins 2 jours<br>pour voir les graphes.</p></div>';
     return;
   }
-
-  const m = state.settings.mode;
-  const lineColor = m === 'deficit' ? '#ff6b6b' : m === 'reverse' ? '#4dfa8a' : '#ff9f43';
-  const weightColor = '#ffd166';
-
-  c.innerHTML =
-    '<div class="chart-wrap"><div class="chart-title">Calories cibles</div><canvas id="chartCal" height="180"></canvas></div>' +
-    '<div class="chart-wrap"><div class="chart-title">Évolution du poids</div><canvas id="chartWeight" height="180"></canvas></div>';
-
-  const labels = protocol.map(function(r,i){ return 'J'+(i+1); });
-  const cals = protocol.map(function(r){ return r.cal; });
-  const weights = protocol.map(function(r){ return r.weight; });
-
-  drawChart('chartCal', labels, cals, lineColor);
-  drawChart('chartWeight', labels, weights, weightColor, true);
+  var m=state.settings.mode;
+  var lc=m==='deficit'?'#ff6b6b':m==='reverse'?'#4dfa8a':'#ff9f43';
+  c.innerHTML=
+    '<div class="chart-wrap"><div class="chart-title">CALORIES CIBLES</div><canvas id="cCal" height="180"></canvas></div>'+
+    '<div class="chart-wrap"><div class="chart-title">POIDS</div><canvas id="cW" height="180"></canvas></div>';
+  var labels=p.map(function(r,i){return 'J'+(i+1);});
+  drawChart('cCal',labels,p.map(function(r){return r.cal;}),lc,false);
+  drawChart('cW',labels,p.map(function(r){return r.weight;}),'#ffd166',true);
 }
 
-function drawChart(id, labels, data, color, isWeight) {
-  const canvas = document.getElementById(id);
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  const dpr = window.devicePixelRatio || 1;
-  const W = canvas.offsetWidth, H = canvas.offsetHeight || 180;
-  canvas.width = W * dpr; canvas.height = H * dpr;
-  ctx.scale(dpr, dpr);
-
-  const pad = { top:14, right:14, bottom:28, left:46 };
-  const pw = W - pad.left - pad.right;
-  const ph = H - pad.top - pad.bottom;
-  const minV = Math.min(...data) - (isWeight ? 0.5 : 100);
-  const maxV = Math.max(...data) + (isWeight ? 0.5 : 100);
-  const range = maxV - minV || 1;
-
-  function xOf(i) { return pad.left + (i / (data.length-1)) * pw; }
-  function yOf(v) { return pad.top + ph - ((v - minV) / range) * ph; }
-
-  ctx.strokeStyle = '#1e1e3a'; ctx.lineWidth = 1;
-  for (let s = 0; s <= 4; s++) {
-    const v = minV + (range/4)*s;
-    const y = yOf(v);
-    ctx.beginPath(); ctx.moveTo(pad.left,y); ctx.lineTo(pad.left+pw,y); ctx.stroke();
-    ctx.fillStyle = '#3a3a5a'; ctx.font = '9px ui-monospace,monospace'; ctx.textAlign = 'right';
-    ctx.fillText(isWeight ? v.toFixed(1) : Math.round(v), pad.left-5, y+3);
+function drawChart(id,labels,data,color,isW){
+  var cv=document.getElementById(id);if(!cv)return;
+  var ctx=cv.getContext('2d');
+  var dpr=window.devicePixelRatio||1;
+  var W=cv.offsetWidth,H=cv.offsetHeight||180;
+  cv.width=W*dpr;cv.height=H*dpr;ctx.scale(dpr,dpr);
+  var pad={t:14,r:14,b:28,l:46};
+  var pw=W-pad.l-pad.r,ph=H-pad.t-pad.b;
+  var mn=Math.min.apply(null,data)-(isW?0.5:100);
+  var mx=Math.max.apply(null,data)+(isW?0.5:100);
+  var rng=mx-mn||1;
+  function xOf(i){return pad.l+(i/(data.length-1))*pw;}
+  function yOf(v){return pad.t+ph-((v-mn)/rng)*ph;}
+  ctx.strokeStyle='#1e1e3a';ctx.lineWidth=1;
+  for(var s=0;s<=4;s++){
+    var v=mn+(rng/4)*s,y=yOf(v);
+    ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(pad.l+pw,y);ctx.stroke();
+    ctx.fillStyle='#3a3a5a';ctx.font='9px ui-monospace,monospace';ctx.textAlign='right';
+    ctx.fillText(isW?v.toFixed(1):Math.round(v),pad.l-5,y+3);
   }
-
-  if (data.length > 1) {
-    const grad = ctx.createLinearGradient(0,pad.top,0,pad.top+ph);
-    grad.addColorStop(0, color+'33'); grad.addColorStop(1, color+'00');
-    ctx.beginPath(); ctx.moveTo(xOf(0),yOf(data[0]));
-    for (let i = 1; i < data.length; i++) ctx.lineTo(xOf(i),yOf(data[i]));
-    ctx.lineTo(xOf(data.length-1),pad.top+ph); ctx.lineTo(xOf(0),pad.top+ph);
-    ctx.closePath(); ctx.fillStyle = grad; ctx.fill();
+  if(data.length>1){
+    var g=ctx.createLinearGradient(0,pad.t,0,pad.t+ph);
+    g.addColorStop(0,color+'33');g.addColorStop(1,color+'00');
+    ctx.beginPath();ctx.moveTo(xOf(0),yOf(data[0]));
+    for(var i=1;i<data.length;i++)ctx.lineTo(xOf(i),yOf(data[i]));
+    ctx.lineTo(xOf(data.length-1),pad.t+ph);ctx.lineTo(xOf(0),pad.t+ph);
+    ctx.closePath();ctx.fillStyle=g;ctx.fill();
   }
-
-  ctx.beginPath(); ctx.lineWidth = 2; ctx.strokeStyle = color;
-  for (let i = 0; i < data.length; i++) {
-    if (i === 0) ctx.moveTo(xOf(0),yOf(data[0]));
-    else ctx.lineTo(xOf(i),yOf(data[i]));
-  }
+  ctx.beginPath();ctx.lineWidth=2;ctx.strokeStyle=color;
+  for(var i=0;i<data.length;i++){if(i===0)ctx.moveTo(xOf(0),yOf(data[0]));else ctx.lineTo(xOf(i),yOf(data[i]));}
   ctx.stroke();
-
-  for (let i = 0; i < data.length; i++) {
-    ctx.beginPath(); ctx.arc(xOf(i),yOf(data[i]),3,0,Math.PI*2);
-    ctx.fillStyle = color; ctx.fill();
-  }
-
-  ctx.fillStyle = '#3a3a5a'; ctx.font = '9px ui-monospace,monospace'; ctx.textAlign = 'center';
-  const step = Math.max(1, Math.floor(data.length/7));
-  for (let i = 0; i < labels.length; i += step) {
-    ctx.fillText(labels[i], xOf(i), pad.top+ph+16);
-  }
+  for(var i=0;i<data.length;i++){ctx.beginPath();ctx.arc(xOf(i),yOf(data[i]),3,0,Math.PI*2);ctx.fillStyle=color;ctx.fill();}
+  ctx.fillStyle='#3a3a5a';ctx.font='9px ui-monospace,monospace';ctx.textAlign='center';
+  var step=Math.max(1,Math.floor(data.length/7));
+  for(var i=0;i<labels.length;i+=step)ctx.fillText(labels[i],xOf(i),pad.t+ph+16);
 }
 
-// ── RÈGLES ──
-function renderRegles(c) {
-  let html = '';
+function renderRegles(c){
+  var s=state.settings;
+  var html=
+    '<div class="chart-title" style="margin-bottom:12px">TABLEAU R&Eacute;CAPITULATIF</div>'+
+    '<div class="rtw"><table class="rt"><thead><tr>'+
+      '<th>Phase</th><th>Objectif</th><th>Poids &darr;</th><th>Poids =</th><th>Crit&egrave;re d&apos;arr&ecirc;t</th>'+
+    '</tr></thead><tbody>'+
+    '<tr>'+
+      '<td style="color:var(--down)">&darr; D&Eacute;FICIT</td>'+
+      '<td>Perdre du gras</td>'+
+      '<td style="color:var(--muted)">Maintien</td>'+
+      '<td style="color:var(--down)">&#x2212;200 kcal</td>'+
+      '<td>Fatigue, obsession alimentaire, baisse de perfs</td>'+
+    '</tr>'+
+    '<tr>'+
+      '<td style="color:var(--up)">&uarr; REVERSE DIET</td>'+
+      '<td>Maintenance optimis&eacute;e</td>'+
+      '<td style="color:var(--up)">+200 kcal</td>'+
+      '<td style="color:var(--muted)">Maintien</td>'+
+      '<td>Poids stable = maintenance atteinte</td>'+
+    '</tr>'+
+    '<tr>'+
+      '<td style="color:var(--mass)">&#128170; MASSE</td>'+
+      '<td>Maximiser la r&eacute;cup&eacute;ration</td>'+
+      '<td style="color:var(--mass)">+200 kcal</td>'+
+      '<td style="color:var(--muted)">Maintien</td>'+
+      '<td>Trop de gras accumul&eacute;</td>'+
+    '</tr>'+
+    '</tbody></table></div>'+
+    '<div class="inote" style="margin-bottom:20px"><strong>Logique commune :</strong> Minimum 3 jours &agrave; chaque total. &Agrave; partir du J4, comparaison poids du jour vs poids J2 (r&eacute;f&eacute;rence). Pas de dur&eacute;e maximale &agrave; un m&ecirc;me palier.</div>'+
 
-  // ── Tableau récapitulatif ──
-  html +=
-    '<div class="chart-title" style="margin-bottom:12px">TABLEAU RÉCAPITULATIF</div>' +
-    '<div class="rules-table-wrap">' +
-    '<table class="rules-table">' +
-    '<thead><tr>' +
-      '<th>Phase</th><th>Objectif</th><th>Poids ↓</th><th>Poids =</th><th>Crit&egrave;re d&apos;arr&ecirc;t</th>' +
-    '</tr></thead><tbody>' +
-    '<tr>' +
-      '<td style="color:var(--down)">↓ DÉFICIT</td>' +
-      '<td>Perdre du gras</td>' +
-      '<td style="color:var(--muted)">Maintien</td>' +
-      '<td style="color:var(--down)">−200 kcal</td>' +
-      '<td>Fatigue, obsession alimentaire, baisse de perfs</td>' +
-    '</tr>' +
-    '<tr>' +
-      '<td style="color:var(--up)">↑ REVERSE DIET</td>' +
-      '<td>Atteindre la maintenance optimisée</td>' +
-      '<td style="color:var(--up)">+200 kcal</td>' +
-      '<td style="color:var(--muted)">Maintien</td>' +
-      '<td>Maintenance optimisée atteinte (poids stable)</td>' +
-    '</tr>' +
-    '<tr>' +
-      '<td style="color:var(--mass)">💪 PRISE DE MASSE</td>' +
-      '<td>Maximiser la récupération</td>' +
-      '<td style="color:var(--mass)">+200 kcal</td>' +
-      '<td style="color:var(--muted)">Maintien</td>' +
-      '<td>Trop de gras accumulé</td>' +
-    '</tr>' +
-    '</tbody></table></div>' +
-    '<div class="info-note" style="margin-bottom:20px"><strong>Logique commune :</strong> Minimum 3 jours à chaque total calorique. À partir du J4, on compare le poids du jour au poids de J2 (référence). Pas de durée maximale à un même palier.</div>';
+    '<div class="pb">'+
+      '<div class="ph" style="color:var(--down);border-left:3px solid var(--down)">&darr; D&Eacute;FICIT &mdash; PROTOCOLE DE D&Eacute;FICIT PROGRESSIF</div>'+
+      '<div class="pbody">'+
+        '<div class="psec"><div class="pst">&Eacute;tape 1 &mdash; Phase descendante</div>'+
+          '<div class="pi"><span class="pd">1.</span>Point de d&eacute;part : votre maintenance optimis&eacute;e moins 200 kcal</div>'+
+          '<div class="pi"><span class="pd">2.</span>R&egrave;gle de base : tant que le poids diminue (J4+ vs J2), ne modifiez rien</div>'+
+          '<div class="pi"><span class="pd">3.</span>Ajustement : d&egrave;s stagnation ou hausse &rarr; &minus;200 kcal</div>'+
+          '<div class="pi"><span class="pd">4.</span>R&eacute;p&eacute;tition : continuez ce processus progressivement</div>'+
+        '</div>'+
+        '<div class="psec"><div class="pst">Signaux d&apos;arr&ecirc;t</div>'+
+          '<div class="pi"><span class="pd">&bull;</span>Obsession alimentaire constante</div>'+
+          '<div class="pi"><span class="pd">&bull;</span>Baisse notable des performances sportives</div>'+
+          '<div class="pi"><span class="pd">&bull;</span>Fatigue pr&eacute;matur&eacute;e et accrue</div>'+
+          '<div class="pi"><span class="pd">&bull;</span>Stagnation pond&eacute;rale malgr&eacute; le d&eacute;ficit</div>'+
+        '</div>'+
+        '<div class="psec"><div class="pst">&Eacute;tape 3 &mdash; Remontée si n&eacute;cessaire</div>'+
+          '<div class="pi"><span class="pd">&bull;</span>Si signaux d&apos;arr&ecirc;t &rarr; passer en mode Reverse Diet</div>'+
+          '<div class="pi"><span class="pd">&bull;</span>Une fois la remont&eacute;e termin&eacute;e, reprendre la phase descendante</div>'+
+          '<div class="pi"><span class="pd">&bull;</span>Ce cycle peut &ecirc;tre r&eacute;p&eacute;t&eacute; selon vos besoins</div>'+
+        '</div>'+
+      '</div>'+
+    '</div>'+
 
-  // ── Bloc DÉFICIT ──
-  html +=
-    '<div class="phase-block">' +
-    '<div class="phase-header" style="color:var(--down);border-left:3px solid var(--down)">↓ DÉFICIT — PROTOCOLE DE DÉFICIT PROGRESSIF</div>' +
-    '<div class="phase-body">' +
-      '<div class="phase-section">' +
-        '<div class="phase-section-title">Étape 1 — Phase descendante</div>' +
-        '<div class="phase-item"><span class="phase-dot">1.</span>Point de départ : votre maintenance optimisée moins 200 kcal</div>' +
-        '<div class="phase-item"><span class="phase-dot">2.</span>Règle de base : tant que le poids diminue (J4+ vs J2), ne modifiez rien</div>' +
-        '<div class="phase-item"><span class="phase-dot">3.</span>Ajustement : dès stagnation ou hausse sur 3 jours → −200 kcal</div>' +
-        '<div class="phase-item"><span class="phase-dot">4.</span>Répétition : continuez ce processus de manière progressive</div>' +
-      '</div>' +
-      '<div class="phase-section">' +
-        '<div class="phase-section-title">Étape 2 — Signaux d&apos;arrêt</div>' +
-        '<div class="phase-item"><span class="phase-dot">•</span>Obsession alimentaire constante</div>' +
-        '<div class="phase-item"><span class="phase-dot">•</span>Baisse notable des performances sportives</div>' +
-        '<div class="phase-item"><span class="phase-dot">•</span>Fatigue prématurée et accrue</div>' +
-        '<div class="phase-item"><span class="phase-dot">•</span>Stagnation pondérale malgré le déficit</div>' +
-      '</div>' +
-      '<div class="phase-section">' +
-        '<div class="phase-section-title">Étape 3 — Phase de remontée (si nécessaire)</div>' +
-        '<div class="phase-item"><span class="phase-dot">•</span>Si signaux d&apos;arrêt → passer en mode Reverse Diet</div>' +
-        '<div class="phase-item"><span class="phase-dot">•</span>Une fois la remontée terminée, reprendre la phase descendante</div>' +
-        '<div class="phase-item"><span class="phase-dot">•</span>Ce cycle peut être répété selon vos besoins</div>' +
-      '</div>' +
-    '</div></div>';
+    '<div class="pb">'+
+      '<div class="ph" style="color:var(--up);border-left:3px solid var(--up)">&uarr; REVERSE DIET &mdash; PROTOCOLE SP&Eacute;CIFIQUE</div>'+
+      '<div class="pbody">'+
+        '<div class="psec"><div class="pst">Indicateurs positifs (ne rien faire)</div>'+
+          '<div class="pi"><span class="pd">&bull;</span>Poids stable ou en l&eacute;g&egrave;re hausse</div>'+
+          '<div class="pi"><span class="pd">&bull;</span>Absence de signaux de fatigue du d&eacute;ficit calorique</div>'+
+        '</div>'+
+        '<div class="psec"><div class="pst">Signaux d&apos;alerte &rarr; +200 kcal</div>'+
+          '<div class="pi"><span class="pd">&bull;</span>Tendance pond&eacute;rale baissi&egrave;re (J4+ &lt; J2)</div>'+
+          '<div class="pi"><span class="pd">&bull;</span>Apparition de signaux de d&eacute;ficit calorique</div>'+
+        '</div>'+
+        '<div class="psec"><div class="pst">Finalisation</div>'+
+          '<div class="pi"><span class="pd">&bull;</span>Poids sans tendance baissi&egrave;re = maintenance optimis&eacute;e atteinte</div>'+
+          '<div class="pi"><span class="pd">&bull;</span>Possibilit&eacute; d&apos;explorer 1&ndash;2 paliers suppl&eacute;mentaires</div>'+
+        '</div>'+
+        '<div class="inote"><strong>Dur&eacute;e :</strong> 4&ndash;8 mois. Crit&egrave;re d&apos;arr&ecirc;t : composition corporelle approche votre limite de tol&eacute;rance en masse grasse.</div>'+
+        '<div class="inote" style="margin-top:8px"><strong>Remarque :</strong> Les fluctuations hydriques post-augmentation peuvent masquer la tendance r&eacute;elle. Attendez 3 jours apr&egrave;s chaque augmentation.</div>'+
+      '</div>'+
+    '</div>'+
 
-  // ── Bloc REVERSE DIET ──
-  html +=
-    '<div class="phase-block">' +
-    '<div class="phase-header" style="color:var(--up);border-left:3px solid var(--up)">↑ REVERSE DIET — PROTOCOLE SPÉCIFIQUE</div>' +
-    '<div class="phase-body">' +
-      '<div class="phase-section">' +
-        '<div class="phase-section-title">Indicateurs positifs (ne rien faire)</div>' +
-        '<div class="phase-item"><span class="phase-dot">•</span>Poids stable ou en légère hausse</div>' +
-        '<div class="phase-item"><span class="phase-dot">•</span>Absence de signaux de fatigue du déficit calorique</div>' +
-      '</div>' +
-      '<div class="phase-section">' +
-        '<div class="phase-section-title">Signaux d'alerte → +200 kcal</div>' +
-        '<div class="phase-item"><span class="phase-dot">•</span>Tendance pondérale baissière (J4+ &lt; J2)</div>' +
-        '<div class="phase-item"><span class="phase-dot">•</span>Apparition de signaux de déficit calorique</div>' +
-      '</div>' +
-      '<div class="phase-section">' +
-        '<div class="phase-section-title">Finalisation</div>' +
-        '<div class="phase-item"><span class="phase-dot">•</span>Lorsque le poids n&apos;a plus de tendance baissière → maintenance optimisée atteinte</div>' +
-        '<div class="phase-item"><span class="phase-dot">•</span>Possibilité d'explorer 1 ou 2 paliers supplémentaires</div>' +
-      '</div>' +
-      '<div class="info-note"><strong>Durée :</strong> 4–8 mois selon vos préférences. Critère d&apos;arrêt : composition corporelle approche de votre limite de tolérance en masse grasse.</div>' +
-      '<div class="info-note" style="margin-top:8px"><strong>Remarque :</strong> Les fluctuations hydriques post-augmentation peuvent temporairement masquer la tendance réelle. Attendez 72h (3 jours) après chaque augmentation avant réévaluation.</div>' +
-    '</div></div>';
+    '<div class="pb">'+
+      '<div class="ph" style="color:var(--mass);border-left:3px solid var(--mass)">&#128170; PRISE DE MASSE</div>'+
+      '<div class="pbody">'+
+        '<div class="psec"><div class="pst">Objectif</div>'+
+          '<div class="pi"><span class="pd">&bull;</span>Maximiser la r&eacute;cup&eacute;ration et la prise de masse musculaire</div>'+
+          '<div class="pi"><span class="pd">&bull;</span>Maintenir un surplus calorique contr&ocirc;l&eacute;</div>'+
+        '</div>'+
+        '<div class="psec"><div class="pst">R&egrave;gles</div>'+
+          '<div class="pi"><span class="pd">&bull;</span>Poids en baisse (J4+ &lt; J2) &rarr; +200 kcal</div>'+
+          '<div class="pi"><span class="pd">&bull;</span>Poids stagne ou hausse &rarr; maintien</div>'+
+          '<div class="pi"><span class="pd">&bull;</span>Fatigue de d&eacute;ficit ressentie &rarr; +200 kcal imm&eacute;diat</div>'+
+        '</div>'+
+        '<div class="psec"><div class="pst">Crit&egrave;re d&apos;arr&ecirc;t</div>'+
+          '<div class="pi"><span class="pd">&bull;</span>Trop de gras accumul&eacute;</div>'+
+          '<div class="pi"><span class="pd">&bull;</span>Passer en mode D&eacute;ficit quand la limite est atteinte</div>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
 
-  // ── Bloc PRISE DE MASSE ──
-  html +=
-    '<div class="phase-block">' +
-    '<div class="phase-header" style="color:var(--mass);border-left:3px solid var(--mass)">💪 PRISE DE MASSE</div>' +
-    '<div class="phase-body">' +
-      '<div class="phase-section">' +
-        '<div class="phase-section-title">Objectif</div>' +
-        '<div class="phase-item"><span class="phase-dot">•</span>Maximiser la récupération et la prise de masse musculaire</div>' +
-        '<div class="phase-item"><span class="phase-dot">•</span>Maintenir un surplus calorique contrôlé</div>' +
-      '</div>' +
-      '<div class="phase-section">' +
-        '<div class="phase-section-title">Règles</div>' +
-        '<div class="phase-item"><span class="phase-dot">•</span>Poids en baisse (J4+ &lt; J2) → +200 kcal (signal de déficit)</div>' +
-        '<div class="phase-item"><span class="phase-dot">•</span>Poids stagne ou hausse → maintien du total actuel</div>' +
-        '<div class="phase-item"><span class="phase-dot">•</span>Fatigue de déficit ressentie → +200 kcal immédiat</div>' +
-      '</div>' +
-      '<div class="phase-section">' +
-        '<div class="phase-section-title">Critère d&apos;arrêt</div>' +
-        '<div class="phase-item"><span class="phase-dot">•</span>Trop de gras accumulé (zone de stockage préférentielle se remplit)</div>' +
-        '<div class="phase-item"><span class="phase-dot">•</span>Passer en mode Déficit quand la limite de tolérance est atteinte</div>' +
-      '</div>' +
-    '</div></div>';
-
-  c.innerHTML = html;
+  c.innerHTML=html;
 }
 
-// ── RÉGLAGES ──
-function renderReglages(c) {
-  const s = state.settings;
-  const modeOptions =
-    '<option value="deficit"'+(s.mode==='deficit'?' selected':'')+'>↓ Déficit</option>' +
-    '<option value="reverse"'+(s.mode==='reverse'?' selected':'')+'>↑ Reverse Diet</option>' +
-    '<option value="masse"'+(s.mode==='masse'?' selected':'')+'>💪 Prise de Masse</option>';
-
-  c.innerHTML =
-    '<div class="settings-section">' +
-      '<div class="settings-title">Mode actif</div>' +
-      '<div class="settings-card">' +
-        '<div class="settings-row">' +
-          '<div><div class="lbl">Protocole</div><div class="desc">Déficit · Reverse Diet · Masse</div></div>' +
-          '<select class="mode-select" id="setMode">' + modeOptions + '</select>' +
-        '</div>' +
-      '</div>' +
-    '</div>' +
-    '<div class="settings-section">' +
-      '<div class="settings-title">Paramètres</div>' +
-      '<div class="settings-card">' +
-        '<div class="settings-row">' +
-          '<div><div class="lbl">Calories de départ</div><div class="desc">Valeur au jour 1</div></div>' +
-          '<input class="input" type="number" id="setStart" value="'+s.startCal+'" step="100" min="800" style="width:100px"/>' +
-        '</div>' +
-        '<div class="settings-row">' +
-          '<div><div class="lbl">Plancher (déficit)</div><div class="desc">Minimum en mode déficit</div></div>' +
-          '<input class="input" type="number" id="setMin" value="'+s.minCal+'" step="100" min="800" max="2400" style="width:100px"/>' +
-        '</div>' +
-        '<div class="settings-row">' +
-          '<div><div class="lbl">Palier</div><div class="desc">Variation par ajustement</div></div>' +
-          '<input class="input" type="number" id="setStep" value="'+s.step+'" step="50" min="50" max="500" style="width:100px"/>' +
-        '</div>' +
-      '</div>' +
-    '</div>' +
-    '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px">' +
-      '<button class="btn" onclick="saveSettings()">ENREGISTRER</button>' +
-    '</div>' +
-    '<div class="settings-section">' +
-      '<div class="settings-title">Données</div>' +
-      '<div class="settings-card">' +
-        '<div class="settings-row">' +
-          '<div><div class="lbl">Exporter</div><div class="desc">Télécharger en CSV</div></div>' +
-          '<button class="btn btn-sm" onclick="exportCSV()">EXPORT CSV</button>' +
-        '</div>' +
-        '<div class="settings-row">' +
-          '<div><div class="lbl">Tout effacer</div><div class="desc">Supprimer toutes les entrées</div></div>' +
-          '<button class="btn btn-sm btn-danger" onclick="clearAll()">EFFACER</button>' +
-        '</div>' +
-      '</div>' +
+function renderReglages(c){
+  var s=state.settings;
+  var opts=
+    '<option value="deficit"'+(s.mode==='deficit'?' selected':'')+'>D&eacute;ficit &darr;</option>'+
+    '<option value="reverse"'+(s.mode==='reverse'?' selected':'')+'>Reverse Diet &uarr;</option>'+
+    '<option value="masse"'+(s.mode==='masse'?' selected':'')+'>Prise de Masse &#128170;</option>';
+  c.innerHTML=
+    '<div class="settings-section">'+
+      '<div class="settings-title">Mode actif</div>'+
+      '<div class="settings-card">'+
+        '<div class="settings-row">'+
+          '<div><div class="lbl">Protocole</div><div class="desc">D&eacute;ficit &middot; Reverse Diet &middot; Masse</div></div>'+
+          '<select class="mode-select" id="setMode">'+opts+'</select>'+
+        '</div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="settings-section">'+
+      '<div class="settings-title">Param&egrave;tres</div>'+
+      '<div class="settings-card">'+
+        '<div class="settings-row">'+
+          '<div><div class="lbl">Calories de d&eacute;part</div><div class="desc">Valeur au jour 1</div></div>'+
+          '<input class="input" type="number" id="setStart" value="'+s.startCal+'" step="100" min="800" style="width:100px"/>'+
+        '</div>'+
+        '<div class="settings-row">'+
+          '<div><div class="lbl">Plancher (d&eacute;ficit)</div><div class="desc">Minimum en mode d&eacute;ficit</div></div>'+
+          '<input class="input" type="number" id="setMin" value="'+s.minCal+'" step="100" min="800" max="2400" style="width:100px"/>'+
+        '</div>'+
+        '<div class="settings-row">'+
+          '<div><div class="lbl">Palier</div><div class="desc">Variation par ajustement</div></div>'+
+          '<input class="input" type="number" id="setStep" value="'+s.step+'" step="50" min="50" max="500" style="width:100px"/>'+
+        '</div>'+
+      '</div>'+
+    '</div>'+
+    '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px">'+
+      '<button class="btn" onclick="saveSettings()">ENREGISTRER</button>'+
+    '</div>'+
+    '<div class="settings-section">'+
+      '<div class="settings-title">Donn&eacute;es</div>'+
+      '<div class="settings-card">'+
+        '<div class="settings-row">'+
+          '<div><div class="lbl">Exporter</div><div class="desc">T&eacute;l&eacute;charger en CSV</div></div>'+
+          '<button class="btn btn-sm" onclick="exportCSV()">EXPORT CSV</button>'+
+        '</div>'+
+        '<div class="settings-row">'+
+          '<div><div class="lbl">Tout effacer</div><div class="desc">Supprimer toutes les entr&eacute;es</div></div>'+
+          '<button class="btn btn-sm btn-danger" onclick="clearAll()">EFFACER</button>'+
+        '</div>'+
+      '</div>'+
     '</div>';
 }
 
-// ══ ACTIONS ════════════════════════════════════
-function addEntry() {
-  const date = document.getElementById('inDate').value;
-  const weight = parseFloat(document.getElementById('inWeight').value);
-  if (!date || isNaN(weight)) return;
-  const idx = state.entries.findIndex(function(e){ return e.date === date; });
-  if (idx >= 0) state.entries[idx].weight = weight;
-  else state.entries.push({ date:date, weight:weight });
-  saveState(); render();
+function addEntry(){
+  var date=document.getElementById('inDate').value;
+  var weight=parseFloat(document.getElementById('inWeight').value);
+  if(!date||isNaN(weight))return;
+  var idx=-1;
+  for(var i=0;i<state.entries.length;i++){if(state.entries[i].date===date){idx=i;break;}}
+  if(idx>=0)state.entries[idx].weight=weight;
+  else state.entries.push({date:date,weight:weight});
+  saveState();render();
 }
 
-function deleteEntry(date) {
-  if (!confirm('Supprimer cette entrée ?')) return;
-  state.entries = state.entries.filter(function(e){ return e.date !== date; });
-  saveState(); render();
+function deleteEntry(date){
+  if(!confirm('Supprimer cette entr\u00e9e ?'))return;
+  state.entries=state.entries.filter(function(e){return e.date!==date;});
+  saveState();render();
 }
 
-function saveSettings() {
-  state.settings = {
-    startCal: parseInt(document.getElementById('setStart').value) || 2200,
-    minCal:   parseInt(document.getElementById('setMin').value)   || 1200,
-    maxCal:   9999,
-    step:     parseInt(document.getElementById('setStep').value)  || 200,
-    mode:     document.getElementById('setMode').value || 'deficit'
+function saveSettings(){
+  state.settings={
+    startCal:parseInt(document.getElementById('setStart').value)||2200,
+    minCal:parseInt(document.getElementById('setMin').value)||1200,
+    maxCal:9999,
+    step:parseInt(document.getElementById('setStep').value)||200,
+    mode:document.getElementById('setMode').value||'deficit'
   };
-  saveState(); render();
-  alert('Réglages enregistrés ✓');
+  saveState();render();
+  alert('R\u00e9glages enregistr\u00e9s \u2713');
 }
 
-function clearAll() {
-  if (!confirm('Effacer TOUTES les entrées ?')) return;
-  state.entries = []; saveState(); render();
+function clearAll(){
+  if(!confirm('Effacer TOUTES les entr\u00e9es ?'))return;
+  state.entries=[];saveState();render();
 }
 
-function exportCSV() {
-  const protocol = computeProtocol(state.entries);
-  if (!protocol.length) return alert('Aucune donnée.');
-  const header = 'Jour,Date,Poids (kg),Calories\n';
-  const rows = protocol.map(function(r,i){ return (i+1)+','+r.date+','+r.weight+','+r.cal; }).join('\n');
-  const blob = new Blob([header+rows], { type:'text/csv;charset=utf-8;' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'calorie-tracker.csv';
-  a.click();
+function exportCSV(){
+  var p=computeProtocol(state.entries);
+  if(!p.length){alert('Aucune donn\u00e9e.');return;}
+  var rows=p.map(function(r,i){return (i+1)+','+r.date+','+r.weight+','+r.cal;});
+  var blob=new Blob(['Jour,Date,Poids,Calories\n'+rows.join('\n')],{type:'text/csv;charset=utf-8;'});
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);a.download='calorie-tracker.csv';a.click();
 }
 
-// ══ TABS ════════════════════════════════════════
-document.querySelectorAll('.tab').forEach(function(btn) {
-  btn.addEventListener('click', function() {
-    document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+document.querySelectorAll('.tab').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
     btn.classList.add('active');
-    currentTab = btn.dataset.tab;
+    currentTab=btn.dataset.tab;
     render();
   });
 });
 
-window.addEventListener('resize', function() {
-  if (currentTab === 'graphe') renderGraphe(document.getElementById('content'));
+window.addEventListener('resize',function(){
+  if(currentTab==='graphe')renderGraphe(document.getElementById('content'));
 });
 
-// ══ INIT ════════════════════════════════════════
 loadState();
 render();
 </script>
