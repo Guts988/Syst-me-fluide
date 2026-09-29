@@ -1,547 +1,291 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Calorie Tracker</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0a0e16">
+<title>Vocabulaire allemand</title>
 <style>
 :root{
-  --bg:#07070f;--surface:#0e0e1c;--surface2:#13132a;
-  --border:#1e1e3a;--border2:#2a2a4a;
-  --text:#e8e8ff;--muted:#5a5a8a;--dim:#3a3a5a;
-  --accent:#7b7bff;--accent-dim:#3a3a8a;
-  --up:#4dfa8a;--up-bg:#081a10;--up-dim:#4dfa8a22;
-  --down:#ff6b6b;--down-bg:#1a0808;--down-dim:#ff6b6b22;
-  --mass:#ff9f43;--mass-bg:#1a0f00;--mass-dim:#ff9f4322;
-  --radius:10px;
-  --mono:ui-monospace,monospace;
-  --display:system-ui,-apple-system,sans-serif;
+  --bg:#0a0e16;
+  --bg-panel:#0f1a24;
+  --cyan:#2de2e6;
+  --cyan-dim:rgba(45,226,230,.62);
+  --line:rgba(45,226,230,.22);
+  --magenta:#ff3fb4;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
 }
-*{box-sizing:border-box;margin:0;padding:0;}
-button{-webkit-appearance:none;appearance:none;font-family:var(--mono);cursor:pointer;}
-body{background:var(--bg);color:var(--text);font-family:var(--mono);min-height:100vh;overflow-x:hidden;}
-.app{max-width:680px;margin:0 auto;padding-bottom:80px;}
-.header{padding:24px 20px 16px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,#0d0d1f 0%,transparent 100%);position:sticky;top:0;z-index:10;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);}
-.eyebrow{font-size:9px;letter-spacing:4px;color:var(--muted);text-transform:uppercase;margin-bottom:4px;}
-.header h1{font-family:var(--display);font-size:22px;font-weight:800;letter-spacing:-0.5px;}
-.header-stats{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
-.stat-pill{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:3px 12px;font-size:11px;color:var(--muted);display:flex;align-items:center;gap:5px;}
-.stat-pill .val{color:var(--text);font-weight:500;}
-.stat-pill.p-deficit{background:var(--down-bg);border-color:var(--down-dim);color:var(--down);}
-.stat-pill.p-reverse{background:var(--up-bg);border-color:var(--up-dim);color:var(--up);}
-.stat-pill.p-masse{background:var(--mass-bg);border-color:var(--mass-dim);color:var(--mass);}
-.nav{display:flex;padding:0 20px;border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;}
-.nav::-webkit-scrollbar{display:none;}
-.tab{background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);padding:11px 14px;font-size:11px;letter-spacing:0.5px;transition:all 0.2s;white-space:nowrap;margin-bottom:-1px;}
-.tab.active{border-bottom-color:var(--accent);color:var(--text);}
-.content{padding:20px;}
-.add-entry{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:20px;}
-.add-title{font-family:var(--display);font-size:13px;font-weight:600;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;}
-.entry-row{display:flex;flex-direction:column;gap:12px;align-items:center;}
-.field{display:flex;flex-direction:column;gap:5px;width:80%;}
-.field label{font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;}
-.input{background:var(--bg);border:1px solid var(--border2);border-radius:6px;padding:9px 12px;color:var(--text);font-family:var(--mono);font-size:14px;outline:none;width:100%;}
-.btn{background:var(--accent-dim);border:1px solid var(--accent);color:var(--accent);border-radius:6px;padding:9px 18px;font-size:12px;letter-spacing:1px;text-align:center;width:80%;}
-.btn-danger{background:transparent;border-color:var(--down);color:var(--down);}
-.btn-sm{padding:5px 10px;font-size:10px;width:auto;}
-.today-banner{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);padding:16px 18px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
-.b-deficit{border-left:3px solid var(--down);}
-.b-reverse{border-left:3px solid var(--up);}
-.b-masse{border-left:3px solid var(--mass);}
-.today-label{font-size:10px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:4px;}
-.today-cal{font-family:var(--display);font-size:32px;font-weight:800;line-height:1;}
-.c-deficit{color:var(--down);}
-.c-reverse{color:var(--up);}
-.c-masse{color:var(--mass);}
-.today-sub{font-size:11px;color:var(--muted);margin-top:4px;}
-.table-wrap{overflow-x:auto;}
-table{width:100%;border-collapse:collapse;font-size:13px;}
-thead th{padding:8px 12px;background:var(--surface2);color:var(--muted);text-align:left;border-bottom:1px solid var(--border);font-weight:400;font-size:10px;letter-spacing:2px;text-transform:uppercase;white-space:nowrap;}
-tbody tr{border-bottom:1px solid var(--border);}
-tbody tr:hover{background:var(--surface);}
-tbody tr:last-child{border-bottom:none;}
-td{padding:10px 12px;vertical-align:middle;}
-.td-day{color:var(--muted);font-size:11px;}
-.td-date{color:var(--dim);font-size:11px;}
-.td-weight{font-size:15px;font-weight:500;}
-.weight-delta{font-size:10px;margin-top:1px;}
-.delta-down{color:var(--up);}
-.delta-up{color:var(--down);}
-.delta-same{color:var(--muted);}
-.td-cal{font-size:16px;font-weight:500;font-family:var(--display);}
-td.del-col{text-align:center;}
-.del-btn{background:none;border:none;color:var(--border2);font-size:14px;padding:4px 6px;border-radius:4px;}
-.del-btn:hover{color:var(--down);}
-tr.r-down{background:#200808;}
-tr.r-mid{background:#18080a;}
-tr.r-low{background:#1a1a0a;}
-tr.r-up{background:#081508;}
-tr.r-mass{background:#0f0a00;}
-.empty{text-align:center;padding:48px 20px;color:var(--muted);}
-.empty-icon{font-size:36px;margin-bottom:12px;opacity:0.4;}
-.empty p{font-size:13px;line-height:1.7;}
-.chart-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:20px;}
-.chart-title{font-size:10px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:14px;}
-canvas{width:100%!important;display:block;}
-.rtw{overflow-x:auto;margin-bottom:20px;}
-.rt{width:100%;border-collapse:collapse;font-size:12px;}
-.rt th{background:var(--surface2);color:var(--muted);padding:8px 10px;text-align:left;border:1px solid var(--border);font-size:10px;letter-spacing:1px;text-transform:uppercase;white-space:nowrap;}
-.rt td{padding:10px;border:1px solid var(--border);color:var(--text);vertical-align:top;line-height:1.5;}
-.rt td:first-child{font-weight:700;white-space:nowrap;}
-.pb{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:14px;overflow:hidden;}
-.ph{padding:10px 16px;font-family:var(--display);font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;border-bottom:1px solid var(--border);}
-.pbody{padding:14px 16px;}
-.psec{margin-bottom:12px;}
-.pst{font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:6px;}
-.pi{display:flex;gap:8px;padding:4px 0;border-bottom:1px solid #ffffff06;font-size:12px;color:#aaa;line-height:1.5;}
-.pi:last-child{border-bottom:none;}
-.pd{color:var(--dim);flex-shrink:0;}
-.inote{background:var(--surface2);border-left:3px solid var(--accent);border-radius:0 6px 6px 0;padding:10px 14px;font-size:12px;color:var(--muted);line-height:1.7;margin-top:10px;}
-.inote strong{color:var(--text);}
-.settings-section{margin-bottom:24px;}
-.settings-title{font-size:10px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:12px;}
-.settings-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
-.settings-row{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);gap:12px;flex-wrap:wrap;}
-.settings-row:last-child{border-bottom:none;}
-.lbl{font-size:13px;color:var(--text);}
-.desc{font-size:11px;color:var(--muted);margin-top:2px;}
-.mode-select{background:var(--bg);border:1px solid var(--border2);color:var(--text);border-radius:6px;padding:6px 10px;font-family:var(--mono);font-size:13px;outline:none;}
-@keyframes fi{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
-.content>*{animation:fi 0.25s ease both;}
-@media(max-width:500px){h1{font-size:18px;}.today-cal{font-size:26px;}}
-::-webkit-scrollbar{width:4px;height:4px;}
-::-webkit-scrollbar-track{background:var(--bg);}
-::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+*{box-sizing:border-box;}
+[hidden]{display:none !important;}
+html,body{margin:0;}
+body{
+  min-height:100vh;
+  background-color:var(--bg);
+  background-image:repeating-linear-gradient(0deg,rgba(45,226,230,.04) 0px,rgba(45,226,230,.04) 1px,transparent 1px,transparent 3px);
+  color:var(--cyan);
+  font-family:var(--mono);
+  font-size:15px;
+  line-height:1.6;
+  display:flex;
+  justify-content:center;
+}
+main{width:100%;max-width:26rem;padding:2.25rem 1.25rem 3rem;}
+button{-webkit-tap-highlight-color:transparent;cursor:pointer;font-family:var(--mono);}
+nav{display:flex;gap:1.5rem;padding-bottom:.8rem;border-bottom:1px solid var(--line);margin-bottom:1.5rem;}
+nav button{
+  background:none;border:0;padding:0 0 .4rem;
+  font-size:13px;line-height:1;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--cyan-dim);
+  border-bottom:2px solid transparent;
+  transition:color .15s ease,border-color .15s ease;
+}
+nav button.on{color:var(--cyan);border-color:var(--cyan);}
+.mode{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.5rem;}
+.mode-btn{
+  background:none;border:1px solid var(--cyan-dim);color:var(--cyan-dim);
+  font-size:11px;line-height:1;letter-spacing:.05em;text-transform:uppercase;
+  padding:.4rem .55rem;border-radius:2px;
+  transition:border-color .15s ease,color .15s ease;
+}
+.mode-btn.on{border-color:var(--cyan);color:var(--cyan);}
+.sens{margin:0 0 .5rem;font-size:12px;line-height:1;letter-spacing:.06em;text-transform:uppercase;color:var(--cyan-dim);min-height:.75rem;}
+h1{margin:0 0 1.75rem;font-weight:400;font-size:2.1rem;line-height:1.3;text-shadow:0 0 12px rgba(45,226,230,.55);overflow-wrap:anywhere;}
+h1.petit{font-size:1.3rem;margin-bottom:1.25rem;text-shadow:none;}
+#mot::before{content:"> ";color:var(--cyan-dim);}
+#mot::after{content:"█";margin-left:.15em;animation:clignote 1s steps(1) infinite;}
+@keyframes clignote{0%,49%{opacity:1;}50%,100%{opacity:0;}}
+input{
+  display:block;width:100%;
+  -webkit-appearance:none;appearance:none;
+  font-family:var(--mono);font-size:15px;
+  padding:.7rem;
+  border:1px solid var(--line);
+  border-radius:2px;
+  background:var(--bg-panel);
+  color:var(--cyan);
+  margin-bottom:.9rem;
+  transition:border-color .15s ease;
+}
+input::placeholder{color:var(--cyan-dim);}
+input:focus{outline:none;border-color:var(--cyan);}
+button.principal{
+  width:100%;
+  font-size:13px;line-height:1;letter-spacing:.08em;text-transform:uppercase;
+  padding:.8rem 1.1rem;
+  border:0;border-radius:2px;
+  background:var(--cyan);
+  color:var(--bg);
+  box-shadow:0 0 14px rgba(45,226,230,.45);
+  transition:opacity .15s ease;
+}
+button.principal:active{opacity:.8;}
+button:disabled,input:disabled{opacity:.35;}
+input:focus-visible,button:focus-visible{outline:2px solid var(--cyan);outline-offset:3px;}
+#retour{min-height:1.3em;margin:1.1rem 0 0;font-weight:600;overflow-wrap:anywhere;}
+#retour.ok{color:var(--cyan);}
+#retour.ko{color:var(--magenta);}
+.score{color:var(--cyan-dim);font-size:12px;margin:.7rem 0 0;text-align:right;}
+.note{color:var(--cyan-dim);font-size:12px;margin:1rem 0 0;}
+table{width:100%;border-collapse:collapse;margin-top:1.4rem;font-size:13px;}
+th{text-align:left;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--cyan-dim);padding:0 .5rem .55rem 0;border-bottom:1px solid var(--line);}
+td{padding:.5rem .5rem .5rem 0;border-bottom:1px solid var(--line);vertical-align:top;overflow-wrap:anywhere;color:var(--cyan);}
+td.x{width:2rem;text-align:right;padding-right:0;}
+.suppr{background:none;border:0;color:var(--magenta);font-size:1rem;line-height:1;padding:.35rem;}
+@media (prefers-reduced-motion:reduce){
+  *{transition:none !important;}
+  #mot::after{animation:none;}
+}
 </style>
 </head>
 <body>
-<div class="app">
-  <div class="header">
-    <div class="eyebrow">Protocole Calorique</div>
-    <h1>Calorie Tracker</h1>
-    <div class="header-stats" id="hs"></div>
-  </div>
-  <div class="nav">
-    <button class="tab active" data-tab="journal">&#128197; Journal</button>
-    <button class="tab" data-tab="graphe">&#128200; Graphe</button>
-    <button class="tab" data-tab="regles">&#128218; R&egrave;gles</button>
-    <button class="tab" data-tab="reglages">&#9881;&#65039; R&eacute;glages</button>
-  </div>
-  <div class="content" id="content"></div>
-</div>
+<main>
+  <nav role="tablist">
+    <button type="button" id="n-exercice" class="on" role="tab" aria-selected="true" aria-controls="exercice">Exercice</button>
+    <button type="button" id="n-liste" role="tab" aria-selected="false" aria-controls="liste">Liste</button>
+  </nav>
+
+  <section id="exercice" role="tabpanel" aria-labelledby="n-exercice">
+    <div class="mode" role="group" aria-label="Sens de traduction">
+      <button type="button" class="mode-btn on" data-mode="alea" aria-pressed="true">Aléatoire</button>
+      <button type="button" class="mode-btn" data-mode="de" aria-pressed="false">DE→FR</button>
+      <button type="button" class="mode-btn" data-mode="fr" aria-pressed="false">FR→DE</button>
+    </div>
+    <p class="sens" id="sens"></p>
+    <h1 id="mot"></h1>
+    <form id="f-ex">
+      <input id="rep" type="text" placeholder="traduction" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Traduction">
+      <button class="principal" id="ok" type="submit">Vérifier</button>
+    </form>
+    <p id="retour" aria-live="polite"></p>
+    <p class="score" id="score"></p>
+  </section>
+
+  <section id="liste" hidden role="tabpanel" aria-labelledby="n-liste">
+    <h1 class="petit">Mes mots</h1>
+    <form id="f-add">
+      <input id="de" type="text" placeholder="allemand" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Mot en allemand">
+      <input id="fr" type="text" placeholder="français" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Traduction en français">
+      <button class="principal" type="submit">Ajouter</button>
+    </form>
+    <p class="note">Plusieurs traductions : sépare-les par /. Un mot sans × est dans MOTS_BASE, à modifier dans le fichier.</p>
+    <p class="note" id="nb"></p>
+    <table>
+      <thead><tr><th>Allemand</th><th>Français</th><th></th></tr></thead>
+      <tbody id="corps"></tbody>
+    </table>
+  </section>
+</main>
+
 <script>
-var DEFAULT = {startCal:2200,minCal:1200,maxCal:9999,step:200,mode:'deficit'};
-var state = {entries:[],settings:Object.assign({},DEFAULT)};
+// Mots : ajoute-les depuis l'onglet Liste, ou directement ici : ["allemand", "français"],
+// Plusieurs traductions : sépare-les par /  (ex. "bitte", "s'il vous plaît / de rien")
+var MOTS_BASE = [];
 
-function loadState(){
-  try{var s=localStorage.getItem('calt3');if(s)state=Object.assign({},state,JSON.parse(s));}catch(e){}
+var CLE = "vocab-mots-ajoutes";
+var CLE_MODE = "vocab-sens-mode";
+function $(id) { return document.getElementById(id); }
+function lireExtras() {
+  try { return JSON.parse(localStorage.getItem(CLE)) || []; } catch (e) { return []; }
 }
-function saveState(){localStorage.setItem('calt3',JSON.stringify(state));}
+function ecrireExtras(a) {
+  try { localStorage.setItem(CLE, JSON.stringify(a)); } catch (e) {}
+}
+function lireMode() {
+  try {
+    var m = localStorage.getItem(CLE_MODE);
+    return (m === "de" || m === "fr") ? m : "alea";
+  } catch (e) { return "alea"; }
+}
+function ecrireMode(m) {
+  try { localStorage.setItem(CLE_MODE, m); } catch (e) {}
+}
+function tousLesMots() {
+  var base = MOTS_BASE.map(function (m) { return { de: m[0], fr: m[1], base: true }; });
+  var extras = lireExtras().map(function (m, i) { return { de: m.de, fr: m.fr, base: false, i: i }; });
+  return base.concat(extras);
+}
 
-function computeProtocol(entries){
-  if(!entries.length)return[];
-  var sorted=entries.slice().sort(function(a,b){return a.date<b.date?-1:1;});
-  var startCal=state.settings.startCal;
-  var minCal=state.settings.minCal;
-  var step=state.settings.step;
-  var mode=state.settings.mode;
-  var result=[];
-  for(var i=0;i<sorted.length;i++){
-    var entry=sorted[i];
-    var w=entry.weight;
-    if(i===0){result.push({date:entry.date,weight:w,cal:startCal});continue;}
-    var prev=result[i-1];
-    var consec=0;
-    for(var k=i-1;k>=0;k--){if(result[k].cal===prev.cal)consec++;else break;}
-    var firstIdx=i-consec;
-    var refIdx=firstIdx+1;
-    var weightRef=sorted[refIdx]?sorted[refIdx].weight:sorted[firstIdx].weight;
-    if(consec<3){result.push({date:entry.date,weight:w,cal:prev.cal});continue;}
-    var isDown=w<weightRef;
-    var nextCal;
-    if(mode==='deficit'){
-      nextCal=isDown?prev.cal:Math.max(minCal,prev.cal-step);
-    }else{
-      nextCal=isDown?prev.cal+step:prev.cal;
-    }
-    result.push({date:entry.date,weight:w,cal:nextCal});
+function nettoyer(s) {
+  return s.toLowerCase().replace(/[’‘]/g, "'").replace(/[.!?,;:]/g, "").replace(/\s+/g, " ").trim();
+}
+function sansAccents(s) {
+  return nettoyer(s).replace(/ä/g, "ae").replace(/ö/g, "oe").replace(/ü/g, "ue").replace(/ß/g, "ss")
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+function verifier(reponse, attendu) {
+  var r = nettoyer(reponse), rs = sansAccents(reponse), res = 0;
+  attendu.split(/[\/;]/).forEach(function (v) {
+    if (nettoyer(v) === r) res = 2;
+    else if (res < 2 && sansAccents(v) === rs) res = 1;
+  });
+  return res;
+}
+
+var mots = [], file = [], cur, direction, attendu, etat = "question", bon = 0, total = 0, sig = "";
+var modeSens = lireMode();
+var modeBoutons = document.querySelectorAll(".mode-btn");
+modeBoutons.forEach(function (b) {
+  var actif = b.getAttribute("data-mode") === modeSens;
+  b.className = "mode-btn" + (actif ? " on" : "");
+  b.setAttribute("aria-pressed", actif ? "true" : "false");
+  b.onclick = function () {
+    modeSens = b.getAttribute("data-mode");
+    ecrireMode(modeSens);
+    modeBoutons.forEach(function (x) {
+      var on = x === b;
+      x.className = "mode-btn" + (on ? " on" : "");
+      x.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+    demarrer();
+  };
+});
+
+function melanger(a) {
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t;
   }
-  return result;
+  return a;
 }
-
-function todayStr(){return new Date().toISOString().slice(0,10);}
-
-function fmtDate(d){var p=d.split('-');return p[2]+'/'+p[1]+'/'+p[0];}
-
-function getModeInfo(){
-  var m=state.settings.mode;
-  if(m==='deficit')return{label:'&darr; D&Eacute;FICIT',pill:'p-deficit',cal:'c-deficit',ban:'b-deficit'};
-  if(m==='reverse')return{label:'&uarr; REVERSE DIET',pill:'p-reverse',cal:'c-reverse',ban:'b-reverse'};
-  return{label:'&#128170; PRISE DE MASSE',pill:'p-masse',cal:'c-masse',ban:'b-masse'};
+function suivant() {
+  etat = "question";
+  $("retour").className = ""; $("retour").textContent = "";
+  $("rep").value = ""; $("rep").readOnly = false; $("ok").textContent = "Vérifier";
+  if (!file.length) file = melanger(mots.slice());
+  cur = file.pop();
+  direction = modeSens === "alea" ? (Math.random() < 0.5 ? "de" : "fr") : modeSens;
+  $("sens").textContent = direction === "de" ? "Allemand → français" : "Français → allemand";
+  $("mot").textContent = direction === "de" ? cur.de : cur.fr;
+  attendu = direction === "de" ? cur.fr : cur.de;
+  $("rep").focus();
 }
-
-function rowClass(cal){
-  var m=state.settings.mode;
-  if(m==='deficit'){
-    if(cal>=2200)return 'r-low';
-    if(cal>=1800)return 'r-mid';
-    return 'r-down';
-  }
-  if(m==='reverse')return 'r-up';
-  return 'r-mass';
-}
-
-var currentTab='journal';
-
-function render(){
-  updateHeader();
-  var c=document.getElementById('content');
-  c.innerHTML='';
-  if(currentTab==='journal')renderJournal(c);
-  else if(currentTab==='graphe')renderGraphe(c);
-  else if(currentTab==='regles')renderRegles(c);
-  else if(currentTab==='reglages')renderReglages(c);
-}
-
-function updateHeader(){
-  var el=document.getElementById('hs');
-  var p=computeProtocol(state.entries);
-  if(!p.length){el.innerHTML='';return;}
-  var last=p[p.length-1];
-  var mi=getModeInfo();
-  el.innerHTML=
-    '<div class="stat-pill '+mi.pill+'">'+mi.label+'</div>'+
-    '<div class="stat-pill">Aujourd&apos;hui <span class="val">'+last.cal+' kcal</span></div>'+
-    '<div class="stat-pill">'+state.entries.length+' jours</div>';
-}
-
-function renderJournal(c){
-  var protocol=computeProtocol(state.entries);
-  var sorted=state.entries.slice().sort(function(a,b){return a.date<b.date?-1:1;});
-  var mi=getModeInfo();
-  var html='';
-
-  if(protocol.length>0){
-    var last=protocol[protocol.length-1];
-    html+=
-      '<div class="today-banner '+mi.ban+'">'+
-        '<div>'+
-          '<div class="today-label">Objectif du jour</div>'+
-          '<div class="today-cal '+mi.cal+'">'+last.cal+' <span style="font-size:14px;font-weight:400;opacity:.5">kcal</span></div>'+
-          '<div class="today-sub">'+mi.label+' &middot; Jour '+protocol.length+'</div>'+
-        '</div>'+
-        '<div style="text-align:right">'+
-          '<div class="today-label">Dernier poids</div>'+
-          '<div style="font-size:20px;font-family:var(--display);font-weight:700">'+last.weight.toFixed(1)+' <span style="font-size:12px;opacity:.5">kg</span></div>'+
-          '<div class="today-sub">'+fmtDate(last.date)+'</div>'+
-        '</div>'+
-      '</div>';
-  }
-
-  html+=
-    '<div class="add-entry">'+
-      '<div class="add-title">+ Ajouter une entr&eacute;e</div>'+
-      '<div class="entry-row">'+
-        '<div class="field"><label>Date</label><input class="input" type="date" id="inDate" value="'+todayStr()+'"/></div>'+
-        '<div class="field"><label>Poids (kg)</label><input class="input" type="number" id="inWeight" step="0.1" placeholder="80.0"/></div>'+
-        '<button class="btn" onclick="addEntry()">AJOUTER</button>'+
-      '</div>'+
-    '</div>';
-
-  if(!protocol.length){
-    html+='<div class="empty"><div class="empty-icon">&#9878;&#65039;</div><p>Entre ton poids du premier jour<br>pour d&eacute;marrer le protocole.</p></div>';
-    c.innerHTML=html;return;
-  }
-
-  var rows=protocol.slice().reverse();
-  html+='<div class="table-wrap"><table><thead><tr>'+
-    '<th>Jour</th><th>Date</th><th>Poids</th><th>Calories</th><th>Statut</th><th></th>'+
-    '</tr></thead><tbody>';
-
-  for(var ri=0;ri<rows.length;ri++){
-    var row=rows[ri];
-    var origIdx=-1;
-    for(var si=0;si<sorted.length;si++){if(sorted[si].date===row.date){origIdx=si;break;}}
-    var icon=origIdx===0?'&#127937;':(sorted[origIdx].weight<(sorted[origIdx-1]||{weight:sorted[origIdx].weight}).weight?'&darr;':sorted[origIdx].weight>(sorted[origIdx-1]||{weight:sorted[origIdx].weight}).weight?'&uarr;':'&rarr;');
-    var delta='';
-    if(origIdx>0){
-      var diff=sorted[origIdx].weight-sorted[origIdx-1].weight;
-      if(Math.abs(diff)<0.05)delta='<div class="weight-delta delta-same">&rarr;</div>';
-      else if(diff<0)delta='<div class="weight-delta delta-down">-'+Math.abs(diff).toFixed(1)+' kg</div>';
-      else delta='<div class="weight-delta delta-up">+'+diff.toFixed(1)+' kg</div>';
-    }
-    html+=
-      '<tr class="'+rowClass(row.cal)+'" data-date="'+row.date+'">'+
-        '<td class="td-day">J'+(origIdx+1)+'</td>'+
-        '<td class="td-date">'+fmtDate(row.date)+'</td>'+
-        '<td class="td-weight">'+row.weight.toFixed(1)+' kg'+delta+'</td>'+
-        '<td class="td-cal">'+row.cal+'</td>'+
-        '<td>'+icon+'</td>'+
-        '<td class="del-col"><button class="del-btn" data-date="'+row.date+'" onclick="deleteEntry(this.dataset.date)">&#x2715;</button></td>'+
-      '</tr>';
-  }
-  html+='</tbody></table></div>';
-  c.innerHTML=html;
-}
-
-function renderGraphe(c){
-  var p=computeProtocol(state.entries);
-  if(p.length<2){
-    c.innerHTML='<div class="empty"><div class="empty-icon">&#128200;</div><p>Entre au moins 2 jours<br>pour voir les graphes.</p></div>';
+function demarrer() {
+  mots = tousLesMots(); file = [];
+  var vide = !mots.length;
+  $("rep").disabled = vide; $("ok").disabled = vide;
+  if (vide) {
+    $("sens").textContent = ""; $("mot").textContent = "Aucun mot";
+    $("retour").className = ""; $("retour").textContent = "Ajoute des mots dans l'onglet Liste.";
     return;
   }
-  var m=state.settings.mode;
-  var lc=m==='deficit'?'#ff6b6b':m==='reverse'?'#4dfa8a':'#ff9f43';
-  c.innerHTML=
-    '<div class="chart-wrap"><div class="chart-title">CALORIES CIBLES</div><canvas id="cCal" height="180"></canvas></div>'+
-    '<div class="chart-wrap"><div class="chart-title">POIDS</div><canvas id="cW" height="180"></canvas></div>';
-  var labels=p.map(function(r,i){return 'J'+(i+1);});
-  drawChart('cCal',labels,p.map(function(r){return r.cal;}),lc,false);
-  drawChart('cW',labels,p.map(function(r){return r.weight;}),'#ffd166',true);
+  suivant();
 }
+$("f-ex").onsubmit = function (e) {
+  e.preventDefault();
+  if (etat === "reponse") { suivant(); return; }
+  if (!$("rep").value.trim()) return;
+  var r = verifier($("rep").value, attendu), el = $("retour");
+  total++; if (r) bon++;
+  el.className = r ? "ok" : "ko";
+  el.textContent = r === 2 ? "Correct" : r === 1 ? "Correct, orthographe exacte : " + attendu : "Faux, réponse : " + attendu;
+  $("score").textContent = "Score : " + bon + " / " + total;
+  $("rep").readOnly = true; $("ok").textContent = "Suivant"; etat = "reponse";
+};
 
-function drawChart(id,labels,data,color,isW){
-  var cv=document.getElementById(id);if(!cv)return;
-  var ctx=cv.getContext('2d');
-  var dpr=window.devicePixelRatio||1;
-  var W=cv.offsetWidth,H=cv.offsetHeight||180;
-  cv.width=W*dpr;cv.height=H*dpr;ctx.scale(dpr,dpr);
-  var pad={t:14,r:14,b:28,l:46};
-  var pw=W-pad.l-pad.r,ph=H-pad.t-pad.b;
-  var mn=Math.min.apply(null,data)-(isW?0.5:100);
-  var mx=Math.max.apply(null,data)+(isW?0.5:100);
-  var rng=mx-mn||1;
-  function xOf(i){return pad.l+(i/(data.length-1))*pw;}
-  function yOf(v){return pad.t+ph-((v-mn)/rng)*ph;}
-  ctx.strokeStyle='#1e1e3a';ctx.lineWidth=1;
-  for(var s=0;s<=4;s++){
-    var v=mn+(rng/4)*s,y=yOf(v);
-    ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(pad.l+pw,y);ctx.stroke();
-    ctx.fillStyle='#3a3a5a';ctx.font='9px ui-monospace,monospace';ctx.textAlign='right';
-    ctx.fillText(isW?v.toFixed(1):Math.round(v),pad.l-5,y+3);
-  }
-  if(data.length>1){
-    var g=ctx.createLinearGradient(0,pad.t,0,pad.t+ph);
-    g.addColorStop(0,color+'33');g.addColorStop(1,color+'00');
-    ctx.beginPath();ctx.moveTo(xOf(0),yOf(data[0]));
-    for(var i=1;i<data.length;i++)ctx.lineTo(xOf(i),yOf(data[i]));
-    ctx.lineTo(xOf(data.length-1),pad.t+ph);ctx.lineTo(xOf(0),pad.t+ph);
-    ctx.closePath();ctx.fillStyle=g;ctx.fill();
-  }
-  ctx.beginPath();ctx.lineWidth=2;ctx.strokeStyle=color;
-  for(var i=0;i<data.length;i++){if(i===0)ctx.moveTo(xOf(0),yOf(data[0]));else ctx.lineTo(xOf(i),yOf(data[i]));}
-  ctx.stroke();
-  for(var i=0;i<data.length;i++){ctx.beginPath();ctx.arc(xOf(i),yOf(data[i]),3,0,Math.PI*2);ctx.fillStyle=color;ctx.fill();}
-  ctx.fillStyle='#3a3a5a';ctx.font='9px ui-monospace,monospace';ctx.textAlign='center';
-  var step=Math.max(1,Math.floor(data.length/7));
-  for(var i=0;i<labels.length;i+=step)ctx.fillText(labels[i],xOf(i),pad.t+ph+16);
-}
-
-function renderRegles(c){
-  var s=state.settings;
-  var html=
-    '<div class="chart-title" style="margin-bottom:12px">TABLEAU R&Eacute;CAPITULATIF</div>'+
-    '<div class="rtw"><table class="rt"><thead><tr>'+
-      '<th>Phase</th><th>Objectif</th><th>Poids &darr;</th><th>Poids =</th><th>Crit&egrave;re d&apos;arr&ecirc;t</th>'+
-    '</tr></thead><tbody>'+
-    '<tr>'+
-      '<td style="color:var(--down)">&darr; D&Eacute;FICIT</td>'+
-      '<td>Perdre du gras</td>'+
-      '<td style="color:var(--muted)">Maintien</td>'+
-      '<td style="color:var(--down)">&#x2212;200 kcal</td>'+
-      '<td>Fatigue, obsession alimentaire, baisse de perfs</td>'+
-    '</tr>'+
-    '<tr>'+
-      '<td style="color:var(--up)">&uarr; REVERSE DIET</td>'+
-      '<td>Maintenance optimis&eacute;e</td>'+
-      '<td style="color:var(--up)">+200 kcal</td>'+
-      '<td style="color:var(--muted)">Maintien</td>'+
-      '<td>Poids stable = maintenance atteinte</td>'+
-    '</tr>'+
-    '<tr>'+
-      '<td style="color:var(--mass)">&#128170; MASSE</td>'+
-      '<td>Maximiser la r&eacute;cup&eacute;ration</td>'+
-      '<td style="color:var(--mass)">+200 kcal</td>'+
-      '<td style="color:var(--muted)">Maintien</td>'+
-      '<td>Trop de gras accumul&eacute;</td>'+
-    '</tr>'+
-    '</tbody></table></div>'+
-    '<div class="inote" style="margin-bottom:20px"><strong>Logique commune :</strong> Minimum 3 jours &agrave; chaque total. &Agrave; partir du J4, comparaison poids du jour vs poids J2 (r&eacute;f&eacute;rence). Pas de dur&eacute;e maximale &agrave; un m&ecirc;me palier.</div>'+
-
-    '<div class="pb">'+
-      '<div class="ph" style="color:var(--down);border-left:3px solid var(--down)">&darr; D&Eacute;FICIT &mdash; PROTOCOLE DE D&Eacute;FICIT PROGRESSIF</div>'+
-      '<div class="pbody">'+
-        '<div class="psec"><div class="pst">&Eacute;tape 1 &mdash; Phase descendante</div>'+
-          '<div class="pi"><span class="pd">1.</span>Point de d&eacute;part : votre maintenance optimis&eacute;e moins 200 kcal</div>'+
-          '<div class="pi"><span class="pd">2.</span>R&egrave;gle de base : tant que le poids diminue (J4+ vs J2), ne modifiez rien</div>'+
-          '<div class="pi"><span class="pd">3.</span>Ajustement : d&egrave;s stagnation ou hausse &rarr; &minus;200 kcal</div>'+
-          '<div class="pi"><span class="pd">4.</span>R&eacute;p&eacute;tition : continuez ce processus progressivement</div>'+
-        '</div>'+
-        '<div class="psec"><div class="pst">Signaux d&apos;arr&ecirc;t</div>'+
-          '<div class="pi"><span class="pd">&bull;</span>Obsession alimentaire constante</div>'+
-          '<div class="pi"><span class="pd">&bull;</span>Baisse notable des performances sportives</div>'+
-          '<div class="pi"><span class="pd">&bull;</span>Fatigue pr&eacute;matur&eacute;e et accrue</div>'+
-          '<div class="pi"><span class="pd">&bull;</span>Stagnation pond&eacute;rale malgr&eacute; le d&eacute;ficit</div>'+
-        '</div>'+
-        '<div class="psec"><div class="pst">&Eacute;tape 3 &mdash; Remontée si n&eacute;cessaire</div>'+
-          '<div class="pi"><span class="pd">&bull;</span>Si signaux d&apos;arr&ecirc;t &rarr; passer en mode Reverse Diet</div>'+
-          '<div class="pi"><span class="pd">&bull;</span>Une fois la remont&eacute;e termin&eacute;e, reprendre la phase descendante</div>'+
-          '<div class="pi"><span class="pd">&bull;</span>Ce cycle peut &ecirc;tre r&eacute;p&eacute;t&eacute; selon vos besoins</div>'+
-        '</div>'+
-      '</div>'+
-    '</div>'+
-
-    '<div class="pb">'+
-      '<div class="ph" style="color:var(--up);border-left:3px solid var(--up)">&uarr; REVERSE DIET &mdash; PROTOCOLE SP&Eacute;CIFIQUE</div>'+
-      '<div class="pbody">'+
-        '<div class="psec"><div class="pst">Indicateurs positifs (ne rien faire)</div>'+
-          '<div class="pi"><span class="pd">&bull;</span>Poids stable ou en l&eacute;g&egrave;re hausse</div>'+
-          '<div class="pi"><span class="pd">&bull;</span>Absence de signaux de fatigue du d&eacute;ficit calorique</div>'+
-        '</div>'+
-        '<div class="psec"><div class="pst">Signaux d&apos;alerte &rarr; +200 kcal</div>'+
-          '<div class="pi"><span class="pd">&bull;</span>Tendance pond&eacute;rale baissi&egrave;re (J4+ &lt; J2)</div>'+
-          '<div class="pi"><span class="pd">&bull;</span>Apparition de signaux de d&eacute;ficit calorique</div>'+
-        '</div>'+
-        '<div class="psec"><div class="pst">Finalisation</div>'+
-          '<div class="pi"><span class="pd">&bull;</span>Poids sans tendance baissi&egrave;re = maintenance optimis&eacute;e atteinte</div>'+
-          '<div class="pi"><span class="pd">&bull;</span>Possibilit&eacute; d&apos;explorer 1&ndash;2 paliers suppl&eacute;mentaires</div>'+
-        '</div>'+
-        '<div class="inote"><strong>Dur&eacute;e :</strong> 4&ndash;8 mois. Crit&egrave;re d&apos;arr&ecirc;t : composition corporelle approche votre limite de tol&eacute;rance en masse grasse.</div>'+
-        '<div class="inote" style="margin-top:8px"><strong>Remarque :</strong> Les fluctuations hydriques post-augmentation peuvent masquer la tendance r&eacute;elle. Attendez 3 jours apr&egrave;s chaque augmentation.</div>'+
-      '</div>'+
-    '</div>'+
-
-    '<div class="pb">'+
-      '<div class="ph" style="color:var(--mass);border-left:3px solid var(--mass)">&#128170; PRISE DE MASSE</div>'+
-      '<div class="pbody">'+
-        '<div class="psec"><div class="pst">Objectif</div>'+
-          '<div class="pi"><span class="pd">&bull;</span>Maximiser la r&eacute;cup&eacute;ration et la prise de masse musculaire</div>'+
-          '<div class="pi"><span class="pd">&bull;</span>Maintenir un surplus calorique contr&ocirc;l&eacute;</div>'+
-        '</div>'+
-        '<div class="psec"><div class="pst">R&egrave;gles</div>'+
-          '<div class="pi"><span class="pd">&bull;</span>Poids en baisse (J4+ &lt; J2) &rarr; +200 kcal</div>'+
-          '<div class="pi"><span class="pd">&bull;</span>Poids stagne ou hausse &rarr; maintien</div>'+
-          '<div class="pi"><span class="pd">&bull;</span>Fatigue de d&eacute;ficit ressentie &rarr; +200 kcal imm&eacute;diat</div>'+
-        '</div>'+
-        '<div class="psec"><div class="pst">Crit&egrave;re d&apos;arr&ecirc;t</div>'+
-          '<div class="pi"><span class="pd">&bull;</span>Trop de gras accumul&eacute;</div>'+
-          '<div class="pi"><span class="pd">&bull;</span>Passer en mode D&eacute;ficit quand la limite est atteinte</div>'+
-        '</div>'+
-      '</div>'+
-    '</div>';
-
-  c.innerHTML=html;
-}
-
-function renderReglages(c){
-  var s=state.settings;
-  var opts=
-    '<option value="deficit"'+(s.mode==='deficit'?' selected':'')+'>D&eacute;ficit &darr;</option>'+
-    '<option value="reverse"'+(s.mode==='reverse'?' selected':'')+'>Reverse Diet &uarr;</option>'+
-    '<option value="masse"'+(s.mode==='masse'?' selected':'')+'>Prise de Masse &#128170;</option>';
-  c.innerHTML=
-    '<div class="settings-section">'+
-      '<div class="settings-title">Mode actif</div>'+
-      '<div class="settings-card">'+
-        '<div class="settings-row">'+
-          '<div><div class="lbl">Protocole</div><div class="desc">D&eacute;ficit &middot; Reverse Diet &middot; Masse</div></div>'+
-          '<select class="mode-select" id="setMode">'+opts+'</select>'+
-        '</div>'+
-      '</div>'+
-    '</div>'+
-    '<div class="settings-section">'+
-      '<div class="settings-title">Param&egrave;tres</div>'+
-      '<div class="settings-card">'+
-        '<div class="settings-row">'+
-          '<div><div class="lbl">Calories de d&eacute;part</div><div class="desc">Valeur au jour 1</div></div>'+
-          '<input class="input" type="number" id="setStart" value="'+s.startCal+'" step="100" min="800" style="width:100px"/>'+
-        '</div>'+
-        '<div class="settings-row">'+
-          '<div><div class="lbl">Plancher (d&eacute;ficit)</div><div class="desc">Minimum en mode d&eacute;ficit</div></div>'+
-          '<input class="input" type="number" id="setMin" value="'+s.minCal+'" step="100" min="800" max="2400" style="width:100px"/>'+
-        '</div>'+
-        '<div class="settings-row">'+
-          '<div><div class="lbl">Palier</div><div class="desc">Variation par ajustement</div></div>'+
-          '<input class="input" type="number" id="setStep" value="'+s.step+'" step="50" min="50" max="500" style="width:100px"/>'+
-        '</div>'+
-      '</div>'+
-    '</div>'+
-    '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px">'+
-      '<button class="btn" onclick="saveSettings()">ENREGISTRER</button>'+
-    '</div>'+
-    '<div class="settings-section">'+
-      '<div class="settings-title">Donn&eacute;es</div>'+
-      '<div class="settings-card">'+
-        '<div class="settings-row">'+
-          '<div><div class="lbl">Exporter</div><div class="desc">T&eacute;l&eacute;charger en CSV</div></div>'+
-          '<button class="btn btn-sm" onclick="exportCSV()">EXPORT CSV</button>'+
-        '</div>'+
-        '<div class="settings-row">'+
-          '<div><div class="lbl">Tout effacer</div><div class="desc">Supprimer toutes les entr&eacute;es</div></div>'+
-          '<button class="btn btn-sm btn-danger" onclick="clearAll()">EFFACER</button>'+
-        '</div>'+
-      '</div>'+
-    '</div>';
-}
-
-function addEntry(){
-  var date=document.getElementById('inDate').value;
-  var weight=parseFloat(document.getElementById('inWeight').value);
-  if(!date||isNaN(weight))return;
-  var idx=-1;
-  for(var i=0;i<state.entries.length;i++){if(state.entries[i].date===date){idx=i;break;}}
-  if(idx>=0)state.entries[idx].weight=weight;
-  else state.entries.push({date:date,weight:weight});
-  saveState();render();
-}
-
-function deleteEntry(date){
-  if(!confirm('Supprimer cette entr\u00e9e ?'))return;
-  state.entries=state.entries.filter(function(e){return e.date!==date;});
-  saveState();render();
-}
-
-function saveSettings(){
-  state.settings={
-    startCal:parseInt(document.getElementById('setStart').value)||2200,
-    minCal:parseInt(document.getElementById('setMin').value)||1200,
-    maxCal:9999,
-    step:parseInt(document.getElementById('setStep').value)||200,
-    mode:document.getElementById('setMode').value||'deficit'
-  };
-  saveState();render();
-  alert('R\u00e9glages enregistr\u00e9s \u2713');
-}
-
-function clearAll(){
-  if(!confirm('Effacer TOUTES les entr\u00e9es ?'))return;
-  state.entries=[];saveState();render();
-}
-
-function exportCSV(){
-  var p=computeProtocol(state.entries);
-  if(!p.length){alert('Aucune donn\u00e9e.');return;}
-  var rows=p.map(function(r,i){return (i+1)+','+r.date+','+r.weight+','+r.cal;});
-  var blob=new Blob(['Jour,Date,Poids,Calories\n'+rows.join('\n')],{type:'text/csv;charset=utf-8;'});
-  var a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);a.download='calorie-tracker.csv';a.click();
-}
-
-document.querySelectorAll('.tab').forEach(function(btn){
-  btn.addEventListener('click',function(){
-    document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
-    btn.classList.add('active');
-    currentTab=btn.dataset.tab;
-    render();
+function afficher() {
+  var corps = $("corps"), liste = tousLesMots();
+  corps.textContent = "";
+  $("nb").textContent = liste.length + (liste.length > 1 ? " mots" : " mot");
+  liste.forEach(function (m) {
+    var tr = document.createElement("tr");
+    [m.de, m.fr].forEach(function (t) {
+      var td = document.createElement("td"); td.textContent = t; tr.appendChild(td);
+    });
+    var x = document.createElement("td"); x.className = "x";
+    if (!m.base) {
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "suppr"; b.textContent = "×";
+      b.setAttribute("aria-label", "Supprimer " + m.de);
+      b.onclick = function () { var e = lireExtras(); e.splice(m.i, 1); ecrireExtras(e); afficher(); };
+      x.appendChild(b);
+    }
+    tr.appendChild(x);
+    corps.appendChild(tr);
   });
-});
+}
+$("f-add").onsubmit = function (e) {
+  e.preventDefault();
+  var de = $("de").value.trim(), fr = $("fr").value.trim();
+  if (!de || !fr) return;
+  var ex = lireExtras(); ex.push({ de: de, fr: fr }); ecrireExtras(ex);
+  $("de").value = ""; $("fr").value = ""; $("de").focus();
+  afficher();
+};
 
-window.addEventListener('resize',function(){
-  if(currentTab==='graphe')renderGraphe(document.getElementById('content'));
-});
-
-loadState();
-render();
+function goTo(page) {
+  var exOn = page === "exercice";
+  $("exercice").hidden = !exOn;
+  $("liste").hidden = exOn;
+  $("n-exercice").className = exOn ? "on" : "";
+  $("n-exercice").setAttribute("aria-selected", exOn ? "true" : "false");
+  $("n-liste").className = exOn ? "" : "on";
+  $("n-liste").setAttribute("aria-selected", exOn ? "false" : "true");
+  if (!exOn) { afficher(); return; }
+  var s = JSON.stringify(tousLesMots());
+  if (s !== sig) { sig = s; demarrer(); }
+}
+$("n-exercice").onclick = function () { goTo("exercice"); };
+$("n-liste").onclick = function () { goTo("liste"); };
+goTo("exercice");
 </script>
 </body>
-</html> 
+</html>
